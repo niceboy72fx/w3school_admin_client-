@@ -1,23 +1,95 @@
 <script setup>
-import Layout from "../layouts/default.vue";
+import Checkbox from '../components/common/Checkbox.vue';
+import InputError from '../components/common/InputError.vue';
+import InputLabel from '../components/common/InputLabel.vue';
+import PrimaryButton from '../components/common/PrimaryButton.vue';
+import TextInput from '../components/common/TextInput.vue';
+import auth from "../../api/auth";
+import axios from "axios";
+import {ref} from 'vue';
+
+defineProps({
+  canResetPassword: {
+    type: Boolean,
+  },
+  status: {
+    type: String,
+  },
+});
+
+const formData = ref({
+  email: '',
+  password: '',
+  remember: false,
+});
+
+const submit = () => {
+  auth.csrf();
+  auth.login(formData.value)
+};
+// auth.login().then(res => {
+//   console.log(res)
+// })
+
 </script>
 
 <template>
-  <Layout>
-    <template #header>
-      <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        Dashboard
-      </h2>
-    </template>
+  <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
+    {{ status }}
+  </div>
 
-    <div class="my-12">
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-          <div class="p-6 bg-white border-b border-gray-200">
-            You're logged in!
-          </div>
-        </div>
-      </div>
+  <form @submit.prevent="submit">
+    <div>
+      <InputLabel for="email" value="Email"/>
+
+      <TextInput
+          id="email"
+          type="email"
+          class="mt-1 block w-full"
+          v-model="formData.email"
+          required
+          autofocus
+          autocomplete="username"
+      />
+
+      <!--      <InputError class="mt-2" :message="formData.errors.email"/>-->
     </div>
-  </Layout>
+
+    <div class="mt-4">
+      <InputLabel for="password" value="Password"/>
+
+      <TextInput
+          id="password"
+          type="password"
+          class="mt-1 block w-full"
+          v-model="formData.password"
+          required
+          autocomplete="current-password"
+      />
+
+      <!--      <InputError class="mt-2" :message="formData.errors.password"/>-->
+    </div>
+
+    <div class="block mt-4">
+      <label class="flex items-center">
+        <Checkbox name="remember" v-model:checked="formData.remember"/>
+        <span class="ml-2 text-sm text-gray-600">Remember me</span>
+      </label>
+    </div>
+
+    <div class="flex items-center justify-end mt-4">
+      <RouterLink
+          href="/"
+          class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          to>
+        Forgot your password?
+      </RouterLink>
+
+      <PrimaryButton class="ml-4">
+        <!--                     :class="{ 'opacity-25': formData.processing }" :disabled="formData.processing">-->
+
+        Log in
+      </PrimaryButton>
+    </div>
+  </form>
 </template>

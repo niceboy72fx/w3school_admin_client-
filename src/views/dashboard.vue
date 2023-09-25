@@ -1,5 +1,5 @@
 <script setup>
-import Layout from "../layouts/default.vue";
+import Layout from "../layouts/auth.vue";
 </script>
 
 <template>
