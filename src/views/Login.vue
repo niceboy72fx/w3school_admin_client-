@@ -7,6 +7,7 @@ import TextInput from '../components/common/TextInput.vue';
 import auth from "../../api/auth";
 import axios from "axios";
 import {ref} from 'vue';
+import index from "../apis";
 
 defineProps({
   canResetPassword: {
@@ -24,8 +25,8 @@ const formData = ref({
 });
 
 const submit = () => {
-  auth.csrf();
-  auth.login(formData.value)
+  index.get('sanctum/csrf-cookie')
+  index.post('login',formData.value)
 };
 // auth.login().then(res => {
 //   console.log(res)
