@@ -1,6 +1,7 @@
 <script setup>
 import {useRoute, RouterView} from 'vue-router'
-import { computed } from "vue";
+import {computed} from "vue";
+
 const route = useRoute();
 const layout = computed(() => {
   return route?.meta?.layout;
@@ -8,9 +9,7 @@ const layout = computed(() => {
 </script>
 
 <template>
-  <component :is="layout">
-    <RouterView/>
-  </component>
+  <RouterView/>
 </template>
 
 <style scoped>

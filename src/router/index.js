@@ -1,16 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Dashboard from '../views/dashboard.vue'
+import Dashboard from '../views/Dashboard.vue'
 
-const isAuthenticated = false
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
       name: 'home',
-      component: () => import('../layouts/auth.vue'),
+      component: () => import('../views/Dashboard.vue'),
       meta: {
-        layout: 'default'
+        layout: 'DashboardLayout'
       }
     },
     {
@@ -32,9 +31,6 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, from, next) => {
-  if (to.name !== 'login' && !isAuthenticated) next({ name: 'login' })
-  else next()
-})
+
 
 export default router

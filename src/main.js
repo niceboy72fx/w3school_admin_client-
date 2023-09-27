@@ -2,18 +2,21 @@ import './assets/main.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import piniaPersist from 'pinia-plugin-persist';
 
 import App from './App.vue'
 import router from './router'
 import './style.css'
 
-import Default from "./layouts/auth.vue";
-import GuestLayout from "./layouts/GuestLayout.vue";
-const app = createApp(App)
+import {useAuthStore} from "./stores/auth";
 
-app.use(createPinia())
+const app = createApp(App)
+app.use(createPinia().use(piniaPersist))
 app.use(router)
-app.component('default', Default)
-app.component('GuestLayout', GuestLayout)
+router.beforeEach((to, from, next) => {
+    const authStore = useAuthStore()
+    if (to.name !== 'login' && !authStore.isAuthenticate) next({ name: 'login' })
+    else next()
+})
 
 app.mount('#app')
