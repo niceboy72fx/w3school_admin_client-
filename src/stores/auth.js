@@ -8,7 +8,7 @@ export const useAuthStore = defineStore('authStore', () => {
         const user = ref({
             name: null,
             email: null,
-            permissions: null,
+            permissions: [],
         })
 
         // const doubleCount = computed(() => count.value * 2)

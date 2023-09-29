@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory,RouterView } from 'vue-router'
 import Dashboard from '../views/Dashboard.vue'
 
 const router = createRouter({
@@ -6,19 +6,35 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'dashboard',
       component: () => import('../views/Dashboard.vue'),
-      meta: {
-        layout: 'DashboardLayout'
-      }
+    },
+    {
+      path: '/course',
+      name: 'course',
+      component: RouterView,
+      children: [
+        {
+          path: 'approved',
+          name: 'course',
+          component: () => import('../components/course/CourseApproved.vue'),
+        },
+      ]
+    },
+    {
+      path: '/topic',
+      name: 'topic',
+      component: () => import('../views/Course.vue'),
+    },
+    {
+      path: '/lesson',
+      name: 'lesson',
+      component: () => import('../views/Course.vue'),
     },
     {
       path: '/login',
       name: 'login',
       component: () => import('../views/Login.vue'),
-      meta: {
-        layout: 'GuestLayout'
-      }
     },
     {
       path: '/about',
