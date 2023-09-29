@@ -16,8 +16,18 @@ const router = createRouter({
       children: [
         {
           path: 'approved',
-          name: 'course',
+          name: 'course_approved',
           component: () => import('../components/course/CourseApproved.vue'),
+        },
+        {
+          path: 'pending',
+          name: 'course_pending',
+          component: () => import('../components/course/CoursePending.vue'),
+        },
+        {
+          path: 'rejected',
+          name: 'course_rejected',
+          component: () => import('../components/course/CourseRejected.vue'),
         },
       ]
     },

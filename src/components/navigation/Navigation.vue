@@ -1,12 +1,10 @@
 <script setup>
 import {useAuthStore} from "../../stores/auth";
-import listNavigation from "../../constant/navigation"
+import {listNavigation} from "../../constant/navigation"
 
 const {user, logout} = useAuthStore();
-// const open = ref(false);
 import Logo from "../common/Logo.vue";
 import Dropdown from "../common/Dropdown.vue";
-import auth from "../../../api/auth";
 </script>
 
 <template>

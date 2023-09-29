@@ -1,5 +1,9 @@
 <script setup>
+import {course, listNavigation} from "../constant/navigation";
 import DashboardLayout from "../layouts/DashboardLayout.vue";
+import {useAuthStore} from "../stores/auth";
+
+const {user} = useAuthStore()
 </script>
 
 <template>
@@ -14,16 +18,12 @@ import DashboardLayout from "../layouts/DashboardLayout.vue";
       <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
         <div class="p-6 bg-white border-b border-gray-200">
           <div class="w-full">
-            <!--
-              Play with the "justify" value to start from left, center, and right with
-              values of "justify-start", "justify-center", and "justify-end"
-            -->
             <nav class="border-b text-sm flex justify-start">
-              <!-- active -->
-              <a class="inline-block px-4 py-2 border-b-2 border-indigo-600 text-indigo-600 font-semibold" href="/course/approved">Approved</a>
-
-              <a class="inline-block px-4 py-2 text-gray-700 hover:text-black" href="#">Tab 3</a>
-              <a class="inline-block px-4 py-2 text-gray-700 hover:text-black" href="#">Tab 4</a>
+              <template v-for="item in course">
+                <RouterLink class="tab-link" active-class="active" v-show="user.permissions.includes(item.key)" :to="item.route_to">
+                  {{ item.value }}
+                </RouterLink>
+              </template>
             </nav>
             <slot></slot>
           </div>
@@ -33,3 +33,17 @@ import DashboardLayout from "../layouts/DashboardLayout.vue";
   </div>
   </DashboardLayout>
 </template>
+
+<style scoped lang="postcss">
+.tab-link {
+  @apply inline-block px-4 py-2;
+
+  &:not(.active) {
+    @apply text-gray-700 hover:text-black;
+  }
+
+  &.active {
+    @apply border-b-2 border-indigo-600 text-indigo-600 font-semibold;
+  }
+}
+</style>
