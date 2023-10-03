@@ -1,7 +1,6 @@
 import {ref, computed} from 'vue'
 import {defineStore} from 'pinia'
 import course from "../../api/course";
-import router from "../router";
 
 export const useCourseStore = defineStore('courseStore', () => {
         const listApproved = ref([])

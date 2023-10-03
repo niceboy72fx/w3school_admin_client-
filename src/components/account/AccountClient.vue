@@ -1,9 +1,10 @@
-<script setup>
+<script async setup>
 
 import Course from "../../views/Course.vue";
 import Table from "../common/Table.vue";
 import {useCourseStore} from "../../stores/course";
 import {mapCourseStatus} from "../../constant";
+import {COURSE_STATUS} from "../../constant/courseStatus";
 
 const courseStore = useCourseStore();
 
@@ -12,10 +13,11 @@ function ucfirst(string) {
 }
 
 courseStore.getListApproved()
-const dataSource = courseStore.listApproved.map(function (course) {
+const data = courseStore.listApproved.map(function (course) {
   course.status = mapCourseStatus(course.status)
   return course
 })
+
 
 const colums = [
   {
@@ -23,46 +25,38 @@ const colums = [
     dataIndex: 'stt',
   },
   {
-    title: 'Logo',
-    dataIndex: 'logo',
-  },
-  {
     title: 'Name',
     dataIndex: 'name',
   },
   {
-    title: 'Level',
-    dataIndex: 'level',
+    title: 'Email',
+    dataIndex: 'email',
   },
   {
-    title: 'Point',
-    dataIndex: 'point',
-  },
-  {
-    title: 'Time Required',
-    dataIndex: 'time_required',
-  },
-  {
-    title: 'Created At',
-    dataIndex: 'created_at',
-  },
-  {
-    title: 'Updated At',
-    dataIndex: 'updated_at',
+    title: 'Role',
+    dataIndex: 'role',
   },
   {
     title: 'Status',
     dataIndex: 'status',
   },
+  {
+    title: 'Created At',
+    dataIndex: 'created_at',
+  },
 ]
-const actions = ['edit', 'delete']
+
+
+const dataSource = []
+
+const actions = ['edit']
 </script>
 
 <template>
   <Course>
     <Table
         :columns="colums"
-        :dataSource="dataSource"
+        :dataSource="data"
         :actions="actions"
     />
   </Course>

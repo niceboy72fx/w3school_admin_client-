@@ -26,7 +26,7 @@ import Dropdown from "../common/Dropdown.vue";
           <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
             <template v-for="item in listNavigation">
               <RouterLink v-show="user.permissions.includes(item.key)"
-                          class="nav-link" active-class="active" :to="item.route_to">
+                          class="nav-link" active-class="active" :to="{name: item.route_name}">
                 {{ item.value }}
               </RouterLink>
             </template>
@@ -131,10 +131,10 @@ import Dropdown from "../common/Dropdown.vue";
 
     <!--          <div class="ml-3">-->
     <!--            <div class="font-medium text-base text-gray-800">-->
-    <!--              {{ user?.name }}-->
+    <!--              {{ account?.name }}-->
     <!--            </div>-->
-    <!--            <div v-if="user?.email" class="font-medium text-sm text-gray-500">-->
-    <!--              {{ user.email }}-->
+    <!--            <div v-if="account?.email" class="font-medium text-sm text-gray-500">-->
+    <!--              {{ account.email }}-->
     <!--            </div>-->
     <!--          </div>-->
     <!--        </div>-->

@@ -42,9 +42,22 @@ const router = createRouter({
       component: () => import('../views/Course.vue'),
     },
     {
-      path: '/login',
-      name: 'login',
-      component: () => import('../views/Login.vue'),
+      path: '/account',
+      name: 'account',
+      component: () => import('../views/Account.vue'),
+      // component: RouterView,
+      children: [
+        {
+          path: 'user',
+          name: 'account_user',
+          component: () => import('../components/account/AccountClient.vue'),
+        },
+        {
+          path: 'admin',
+          name: 'account_admin',
+          component: () => import('../components/account/AccountCms.vue'),
+        },
+      ]
     },
     {
       path: '/about',
@@ -53,7 +66,17 @@ const router = createRouter({
       // this generates a separate chunk (About.[hash].js) for this route
       // which is lazy-loaded when the route is visited.
       component: () => import('../views/AboutView.vue')
-    }
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/Login.vue'),
+    },
+    {
+      path: '/forgot-password',
+      name: 'forgot-password',
+      component: () => import('../views/ForgotPassword.vue'),
+    },
   ]
 })
 

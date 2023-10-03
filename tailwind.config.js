@@ -1,14 +1,17 @@
-import forms from '@tailwindcss/forms';
-
 module.exports = {
-  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{vue,js,ts,jsx,tsx}",
+    "./node_modules/tw-elements/dist/js/**/*.js"
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: '#04aa6d',
+        currentColor: '#04aa6d',
+      },
+    },
   },
-  plugins: [forms],
+  darkMode: "class",
+  plugins: [require("tw-elements/dist/plugin.cjs")]
 }
-

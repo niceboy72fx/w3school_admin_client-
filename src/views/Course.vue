@@ -20,7 +20,7 @@ const {user} = useAuthStore()
           <div class="w-full">
             <nav class="border-b text-sm flex justify-start">
               <template v-for="item in course">
-                <RouterLink class="tab-link" active-class="active" v-show="user.permissions.includes(item.key)" :to="item.route_to">
+                <RouterLink class="tab-link" active-class="active" v-show="user.permissions.includes(item.key)" :to="{name: item.route_name}">
                   {{ item.value }}
                 </RouterLink>
               </template>

@@ -1,7 +1,7 @@
 import {ref, computed} from 'vue'
 import {defineStore} from 'pinia'
-import auth from "../../api/auth";
 import router from "../router";
+import api from "../apis";
 
 export const useAuthStore = defineStore('authStore', () => {
         const isAuthenticate = ref(false)
@@ -12,30 +12,43 @@ export const useAuthStore = defineStore('authStore', () => {
         })
 
         // const doubleCount = computed(() => count.value * 2)
-        function login(formData) {
-            auth.login(formData).then(function (data) {
-                console.log(data)
+        async function login(formData) {
+            try {
+                await api.get(`sanctum/csrf-cookie`)
+                const {data} = await api.post('login', formData)
                 isAuthenticate.value = true
-                user.value.name = data.name
-                user.value.email = data.email
-                user.value.permissions = data.permissions
-                router.push('/').then(r => {
-                })
-            })
+                user.value = data
+                await router.push('/')
+            } catch (error) {
+                return error.response.data.errors
+            }
         }
 
-        function logout() {
-            auth.logout().then(function () {
+        async function logout() {
+            try {
+                const {data} = await api.post('logout')
                 isAuthenticate.value = false
-                router.push('/login').then(r => {
-                })
-            })
+                user.value = {
+                    name: null,
+                    email: null,
+                    permissions: [],
+                }
+                await router.push('/login')
+            } catch (error) {
+                return error.response.data.errors
+            }
         }
 
         return {isAuthenticate, user, login, logout}
     },
     {
         persist: {
-            enabled: true
+            enabled: true,
+            strategies: [
+                {
+                    key: 'authStore',
+                    storage: localStorage,
+                },
+            ],
         }
     })
