@@ -3,167 +3,188 @@ import {useAuthStore} from "../../stores/auth";
 import {listNavigation} from "../../constant/navigation"
 
 const {user, logout} = useAuthStore();
-import Logo from "../common/Logo.vue";
-import Dropdown from "../common/Dropdown.vue";
+import {Sidenav, Dropdown, Ripple, initTE} from "tw-elements";
+import {onMounted} from "vue";
+
+onMounted(async () => {
+  initTE({Sidenav, Dropdown, Ripple});
+
+  const sidenav2 = document.getElementById("sidenav-1");
+  const sidenavInstance2 = Sidenav.getInstance(sidenav2);
+
+  let innerWidth2 = null;
+
+  const setMode2 = (e) => {
+    // Check necessary for Android devices
+    if (window.innerWidth === innerWidth2) {
+      return;
+    }
+
+    innerWidth2 = window.innerWidth;
+
+    if (window.innerWidth < sidenavInstance2.getBreakpoint("xl")) {
+      sidenavInstance2.changeMode("over");
+      sidenavInstance2.hide();
+    } else {
+      sidenavInstance2.changeMode("side");
+      sidenavInstance2.show();
+    }
+  };
+
+  if (window.innerWidth < sidenavInstance2.getBreakpoint("sm")) {
+    setMode2();
+  }
+
+// Event listeners
+  window.addEventListener("resize", setMode2);
+})
 </script>
 
 <template>
-  <nav class="bg-white border-b border-gray-100">
-    <!-- Primary Navigation Menu  -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between h-16">
-        <div class="flex">
-          <!-- Logo  -->
-          <div class="flex-shrink-0 flex items-center">
-            <RouterLink href="/dashboard" to="">
-              <Logo
-                  class="block h-10 w-auto fill-current text-gray-600"
-              />
-            </RouterLink>
-          </div>
+  <header>
+    <!-- Sidenav -->
+    <nav
+        id="sidenav-1"
+        class="text-primary font-bold fixed left-0 top-0 z-[1035] h-screen w-60 -translate-x-full overflow-hidden bg-white shadow-[0_4px_12px_0_rgba(0,0,0,0.07),_0_2px_4px_rgba(0,0,0,0.05)] dark:bg-zinc-800 xl:data-[te-sidenav-hidden='false']:translate-x-0"
+        data-te-sidenav-init
+        data-te-sidenav-hidden="false"
+        data-te-sidenav-mode-breakpoint-over="0"
+        data-te-sidenav-mode-breakpoint-side="xl"
+        data-te-sidenav-content="#content"
+        data-te-sidenav-accordion="true">
+      <a
+          class="mb-3 flex items-center justify-center py-6 outline-none"
+          href=""
+          data-te-ripple-init
+          data-te-ripple-color="primary">
+        <img
+            id="te-logo"
+            class="mr-4 w-8"
+            src="../../assets/w3schools.svg"
+            alt="W3school cms logo"
+            draggable="false"/>
+        <span>W3School CMS</span>
+      </a>
 
-          <!-- Navigation Links  -->
-          <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-            <template v-for="item in listNavigation">
-              <RouterLink v-show="user.permissions.includes(item.key)"
-                          class="nav-link" active-class="active" :to="{name: item.route_name}">
-                {{ item.value }}
-              </RouterLink>
-            </template>
-          </div>
-        </div>
+      <ul
+          class="relative m-0 list-none px-[0.2rem]"
+          data-te-sidenav-menu-ref>
+        <li class="relative">
+          <a
+              class="group flex h-12 cursor-pointer items-center truncate rounded-[5px] px-6 py-4 text-[0.875rem] text-gray-700 outline-none transition duration-300 ease-linear hover:bg-primary-400/10 hover:text-primary-600 hover:outline-none focus:bg-primary-400/10 focus:text-primary-600 focus:outline-none active:bg-primary-400/10 active:text-primary-600 active:outline-none data-[te-sidenav-state-active]:text-primary-600 data-[te-sidenav-state-focus]:outline-none motion-reduce:transition-none dark:text-gray-300 dark:hover:bg-white/10 dark:focus:bg-white/10 dark:active:bg-white/10"
+              href="/"
+              data-te-sidenav-link-ref>
+            <span
+                class="mr-4 [&>svg]:h-3.5 [&>svg]:w-3.5 [&>svg]:fill-gray-700 [&>svg]:transition [&>svg]:duration-300 [&>svg]:ease-linear group-hover:[&>svg]:fill-primary-600 group-focus:[&>svg]:fill-primary-600 group-active:[&>svg]:fill-primary-600 group-[te-sidenav-state-active]:[&>svg]:fill-primary-600 motion-reduce:[&>svg]:transition-none dark:[&>svg]:fill-gray-300 dark:group-hover:[&>svg]:fill-gray-300 ">
+              <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 512 512">
+                <!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. -->
+                <path
+                    d="M64 64c0-17.7-14.3-32-32-32S0 46.3 0 64V400c0 44.2 35.8 80 80 80H480c17.7 0 32-14.3 32-32s-14.3-32-32-32H80c-8.8 0-16-7.2-16-16V64zm96 288H448c17.7 0 32-14.3 32-32V251.8c0-7.6-2.7-15-7.7-20.8l-65.8-76.8c-12.1-14.2-33.7-15-46.9-1.8l-21 21c-10 10-26.4 9.2-35.4-1.6l-39.2-47c-12.6-15.1-35.7-15.4-48.7-.6L135.9 215c-5.1 5.8-7.9 13.3-7.9 21.1v84c0 17.7 14.3 32 32 32z"/>
+              </svg>
+            </span>
+            <span>Dashboard</span></a
+          >
+        </li>
+      </ul>
+    </nav>
+    <!-- Sidenav -->
 
-        <!--        &lt;!&ndash; Settings Dropdown  &ndash;&gt;-->
-        <div class="hidden sm:flex sm:items-center sm:ml-6">
-          <div class="ml-3 relative">
-            <Dropdown align="right" width="48">
-              <template #trigger>
-                <span class="inline-flex rounded-md">
-                  <button
-                      type="button"
-                      class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-1050"
-                  >
-                    {{ user.name }}
-                    <svg
-                        class="ml-2 -mr-0.5 h-4 w-4"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                    >
-                      <path
-                          fill-rule="evenodd"
-                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                          clip-rule="evenodd"
-                      />
-                    </svg>
-                  </button>
-                </span>
-              </template>
-              <template #content>
-                <RouterLink class="dropdown-link" to="/">Profile</RouterLink>
-                <div class="dropdown-link" @click="logout">Logout</div>
-              </template>
-            </Dropdown>
-          </div>
-        </div>
+    <!-- Navbar -->
+    <nav
+        id="main-navbar"
+        class="fixed left-0 right-0 top-0 flex w-full flex-nowrap items-center justify-between bg-white py-[0.6rem] text-gray-500 shadow-lg hover:text-gray-700 focus:text-gray-700 dark:bg-zinc-700 lg:flex-wrap lg:justify-start xl:pl-60"
+        data-te-navbar-ref>
+      <!-- Container wrapper -->
+      <div
+          class="flex w-full flex-wrap items-center justify-between xl:justify-end px-4">
+        <!-- Toggler -->
+        <button
+            data-te-sidenav-toggle-ref
+            data-te-target="#sidenav-1"
+            class="block border-0 bg-transparent px-2.5 text-gray-500 hover:no-underline hover:shadow-none focus:no-underline focus:shadow-none focus:outline-none focus:ring-0 xl:hidden"
+            aria-controls="#sidenav-1"
+            aria-haspopup="true">
+          <span class="block [&>svg]:h-5 [&>svg]:w-5 [&>svg]:text-white">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                class="h-5 w-5">
+              <path
+                  fill-rule="evenodd"
+                  d="M3 6.75A.75.75 0 013.75 6h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 6.75zM3 12a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75A.75.75 0 013 12zm0 5.25a.75.75 0 01.75-.75h16.5a.75.75 0 010 1.5H3.75a.75.75 0 01-.75-.75z"
+                  clip-rule="evenodd"/>
+            </svg>
+          </span>
+        </button>
 
-        <!--        &lt;!&ndash; Hamburger  &ndash;&gt;-->
-        <!--        <div class="-mr-2 flex items-center sm:hidden">-->
-        <!--          <button-->
-        <!--            @click="open = !open"-->
-        <!--            class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out"-->
-        <!--          >-->
-        <!--            <svg-->
-        <!--              class="h-6 w-6"-->
-        <!--              stroke="currentColor"-->
-        <!--              fill="none"-->
-        <!--              viewBox="0 0 24 24"-->
-        <!--            >-->
-        <!--              <path-->
-        <!--                v-if="open"-->
-        <!--                class="inline-flex"-->
-        <!--                strokeLinecap="round"-->
-        <!--                strokeLinejoin="round"-->
-        <!--                strokeWidth="2"-->
-        <!--                d="M6 18L18 6M6 6l12 12"-->
-        <!--              />-->
-        <!--              <path-->
-        <!--                v-else-->
-        <!--                class="inline-flex"-->
-        <!--                strokeLinecap="round"-->
-        <!--                strokeLinejoin="round"-->
-        <!--                strokeWidth="2"-->
-        <!--                d="M4 6h16M4 12h16M4 18h16"-->
-        <!--              />-->
-        <!--            </svg>-->
-        <!--          </button>-->
-        <!--        </div>-->
+        <!-- Right links -->
+        <ul class="relative flex items-center">
+          <!-- Avatar -->
+          <li class="relative" data-te-dropdown-ref>
+            <a
+                class="hidden-arrow flex items-center whitespace-nowrap transition duration-150 ease-in-out motion-reduce:transition-none"
+                href="#"
+                id="navbarDropdownMenuLink"
+                role="button"
+                data-te-dropdown-toggle-ref
+                aria-expanded="false">
+              <img
+                  src="https://tecdn.b-cdn.net/img/Photos/Avatars/img (31).webp"
+                  class="rounded-full"
+                  style="height: 22px; width: 22px"
+                  alt="Avatar"
+                  loading="lazy"/>
+              Vinh
+              <svg
+                  class="fill-current h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+              >
+                <path
+                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                />
+              </svg>
+            </a>
+            <ul
+                class="absolute left-auto right-0 z-[1000] float-left m-0 mt-1 hidden min-w-[10rem] list-none overflow-hidden rounded-lg border-none bg-white bg-clip-padding text-left text-base shadow-lg dark:bg-zinc-700 [&[data-te-dropdown-show]]:block"
+                aria-labelledby="dropdownMenuButton2"
+                data-te-dropdown-menu-ref>
+              <li>
+                <a
+                    class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-gray-700 hover:bg-gray-100 active:text-zinc-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-400 dark:text-gray-200 dark:hover:bg-white/30"
+                    href="#"
+                    data-te-dropdown-item-ref
+                >My profile</a
+                >
+              </li>
+              <li>
+                <a
+                    class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-gray-700 hover:bg-gray-100 active:text-zinc-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-400 dark:text-gray-200 dark:hover:bg-white/30"
+                    href="#"
+                    data-te-dropdown-item-ref
+                >Settings</a
+                >
+              </li>
+              <li>
+                <a
+                    class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-gray-700 hover:bg-gray-100 active:text-zinc-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-400 dark:text-gray-200 dark:hover:bg-white/30"
+                    @click="logout"
+                    data-te-dropdown-item-ref
+                >Logout</a
+                >
+              </li>
+            </ul>
+          </li>
+        </ul>
       </div>
-    </div>
-
-    <!-- Responsive Navigation Menu  -->
-    <!--    <div v-show="open" class="block sm:hidden">-->
-    <!--      <div class="pt-2 pb-3 space-y-1">-->
-    <!--        <NavigationResponsiveLink href="/dashboard">-->
-    <!--          Dashboard-->
-    <!--        </NavigationResponsiveLink>-->
-    <!--      </div>-->
-
-    <!--      &lt;!&ndash; Responsive Settings Options  &ndash;&gt;-->
-    <!--      <div class="pt-4 pb-1 border-t border-gray-200">-->
-    <!--        <div class="flex items-center px-4">-->
-    <!--          <div class="flex-shrink-0">-->
-    <!--            <svg-->
-    <!--              class="h-10 w-10 fill-current text-gray-400"-->
-    <!--              xmlns="http://www.w3.org/2000/svg"-->
-    <!--              fill="none"-->
-    <!--              viewBox="0 0 24 24"-->
-    <!--              stroke="currentColor"-->
-    <!--            >-->
-    <!--              <path-->
-    <!--                strokeLinecap="round"-->
-    <!--                strokeLinejoin="round"-->
-    <!--                strokeWidth="2"-->
-    <!--                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"-->
-    <!--              />-->
-    <!--            </svg>-->
-    <!--          </div>-->
-
-    <!--          <div class="ml-3">-->
-    <!--            <div class="font-medium text-base text-gray-800">-->
-    <!--              {{ account?.name }}-->
-    <!--            </div>-->
-    <!--            <div v-if="account?.email" class="font-medium text-sm text-gray-500">-->
-    <!--              {{ account.email }}-->
-    <!--            </div>-->
-    <!--          </div>-->
-    <!--        </div>-->
-
-    <!--        <div class="mt-3 space-y-1">-->
-    <!--          &lt;!&ndash; Authentication  &ndash;&gt;-->
-    <!--          <NavigationResponsiveButton @click="logout">-->
-    <!--            Logout-->
-    <!--          </NavigationResponsiveButton>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </div>-->
-  </nav>
+      <!-- Container wrapper -->
+    </nav>
+    <!-- Navbar -->
+  </header>
 </template>
 
 <style scoped lang="postcss">
-.dropdown-link {
-  @apply block w-full px-4 py-2 text-left text-sm leading-5 text-gray-700 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 transition duration-150 ease-in-out cursor-pointer
-}
-
-.nav-link {
-  @apply inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 focus:outline-none transition duration-150 ease-in-out;
-
-  &:not(.active) {
-    @apply border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300;
-  }
-
-  &.active {
-    @apply border-indigo-400 text-gray-900 focus:border-indigo-700;
-  }
-}
 </style>

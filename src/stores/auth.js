@@ -39,7 +39,15 @@ export const useAuthStore = defineStore('authStore', () => {
             }
         }
 
-        return {isAuthenticate, user, login, logout}
+        async function forgotPassword(formData) {
+            await api.post('forgot-password', formData)
+        }
+
+        async function resetPassword(formData) {
+            await api.post('reset-password', formData)
+        }
+
+        return {isAuthenticate, user, login, logout, forgotPassword, resetPassword}
     },
     {
         persist: {

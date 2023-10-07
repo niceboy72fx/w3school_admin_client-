@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory,RouterView } from 'vue-router'
 import Dashboard from '../views/Dashboard.vue'
+import {useAuthStore} from "../stores/auth";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -77,9 +78,30 @@ const router = createRouter({
       name: 'forgot-password',
       component: () => import('../views/ForgotPassword.vue'),
     },
+    {
+      path: '/password-reset/:token',
+      name: 'password-reset',
+      component: () => import('../views/PasswordReset.vue'),
+    },
   ]
 })
 
-
+router.beforeEach((to, from, next) => {
+  const authStore = useAuthStore()
+  if(!authStore.isAuthenticate){
+    switch (to.name) {
+      case 'login':
+      case 'forgot-password':
+      case 'password-reset':
+        next();
+        break;
+      default:
+        next({name: 'login'});
+        break;
+    }
+  }
+  else if (authStore.isAuthenticate && (to.name === 'login' || to.name === 'forgot-password')) next({name: 'dashboard'})
+  else next()
+})
 
 export default router

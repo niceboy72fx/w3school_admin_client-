@@ -6,10 +6,6 @@ module.exports = {
   ],
   theme: {
     extend: {
-      colors: {
-        primary: '#04aa6d',
-        currentColor: '#04aa6d',
-      },
     },
   },
   darkMode: "class",
