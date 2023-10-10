@@ -34,11 +34,13 @@ onMounted(() => {
             router.push({name: 'login'})
           }, count.value * 1000);
         } catch (error) {
-          // let el = document.querySelector('#formEmailInputGroup span')
-          // el.innerHTML = error.response.data.message
-          // el.classList.add('text-[#dc4c64]')
-          // document.querySelector('#formEmailInputGroup label').classList.add('!text-[#dc4c64]')
-          // document.querySelectorAll('#formEmailInputGroup div div').forEach(e => e.classList.add('border-[#dc4c63]'))
+          let el = document.querySelector('#formEmailInputGroup span')
+          el.innerHTML = error.response.data.message
+          el.classList.add('text-[#dc4c64]')
+          document.querySelector('#formEmailInputGroup label').classList.add('!text-[#dc4c64]')
+          document.querySelectorAll('#formEmailInputGroup div div')[0].classList.add('border-[#dc4c64]', 'group-data-[te-input-focused]:shadow-[-1px_0_0_#dc4c64,_0_1px_0_0_#dc4c64,_0_-1px_0_0_#dc4c64]', 'group-data-[te-input-focused]:border-[#dc4c64]')
+          document.querySelectorAll('#formEmailInputGroup div div')[1].classList.add('border-[#dc4c64]', 'group-data-[te-input-focused]:shadow-[0_1px_0_0_#dc4c64]', 'group-data-[te-input-focused]:border-[#dc4c64]')
+          document.querySelectorAll('#formEmailInputGroup div div')[2].classList.add('border-[#dc4c64]', 'group-data-[te-input-focused]:shadow-[1px_0_0_#dc4c64,_0_-1px_0_0_#dc4c64,_0_1px_0_0_#dc4c64]', 'group-data-[te-input-focused]:border-[#dc4c64]')
         }
       } else {
       }

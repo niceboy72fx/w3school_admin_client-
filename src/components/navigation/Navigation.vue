@@ -1,13 +1,11 @@
 <script setup>
 import {useAuthStore} from "../../stores/auth";
-import {listNavigation} from "../../constant/navigation"
-
 const {user, logout} = useAuthStore();
-import {Sidenav, Dropdown, Ripple, initTE} from "tw-elements";
+import {Sidenav, Dropdown, initTE} from "tw-elements";
 import {onMounted} from "vue";
 
-onMounted(async () => {
-  initTE({Sidenav, Dropdown, Ripple});
+onMounted( () => {
+  initTE({Sidenav, Dropdown}, {allowReinits: true});
 
   const sidenav2 = document.getElementById("sidenav-1");
   const sidenavInstance2 = Sidenav.getInstance(sidenav2);
@@ -45,18 +43,16 @@ onMounted(async () => {
     <!-- Sidenav -->
     <nav
         id="sidenav-1"
-        class="text-primary font-bold fixed left-0 top-0 z-[1035] h-screen w-60 -translate-x-full overflow-hidden bg-white shadow-[0_4px_12px_0_rgba(0,0,0,0.07),_0_2px_4px_rgba(0,0,0,0.05)] dark:bg-zinc-800 xl:data-[te-sidenav-hidden='false']:translate-x-0"
+        class="text-primary font-bold fixed left-0 top-0 z-[1] h-screen w-60 -translate-x-full overflow-hidden bg-white shadow-[0_4px_12px_0_rgba(0,0,0,0.07),_0_2px_4px_rgba(0,0,0,0.05)] dark:bg-zinc-800 xl:data-[te-sidenav-hidden='false']:translate-x-0"
         data-te-sidenav-init
         data-te-sidenav-hidden="false"
         data-te-sidenav-mode-breakpoint-over="0"
         data-te-sidenav-mode-breakpoint-side="xl"
         data-te-sidenav-content="#content"
         data-te-sidenav-accordion="true">
-      <a
+      <RouterLink
           class="mb-3 flex items-center justify-center py-6 outline-none"
-          href=""
-          data-te-ripple-init
-          data-te-ripple-color="primary">
+          :to="{name:'dashboard'}">
         <img
             id="te-logo"
             class="mr-4 w-8"
@@ -64,7 +60,7 @@ onMounted(async () => {
             alt="W3school cms logo"
             draggable="false"/>
         <span>W3School CMS</span>
-      </a>
+      </RouterLink>
 
       <ul
           class="relative m-0 list-none px-[0.2rem]"
@@ -153,27 +149,28 @@ onMounted(async () => {
                 aria-labelledby="dropdownMenuButton2"
                 data-te-dropdown-menu-ref>
               <li>
-                <a
+                <RouterLink
                     class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-gray-700 hover:bg-gray-100 active:text-zinc-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-400 dark:text-gray-200 dark:hover:bg-white/30"
-                    href="#"
+                    :to="{name: 'profile'}"
                     data-te-dropdown-item-ref
-                >My profile</a
+                >Profile</RouterLink
                 >
               </li>
               <li>
-                <a
+                <RouterLink
                     class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-gray-700 hover:bg-gray-100 active:text-zinc-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-400 dark:text-gray-200 dark:hover:bg-white/30"
-                    href="#"
+                    to="/"
                     data-te-dropdown-item-ref
-                >Settings</a
+                >Settings</RouterLink
                 >
               </li>
               <li>
-                <a
-                    class="block w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-gray-700 hover:bg-gray-100 active:text-zinc-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-400 dark:text-gray-200 dark:hover:bg-white/30"
+                <RouterLink
+                    class="block cursor-pointer w-full whitespace-nowrap bg-transparent px-4 py-2 text-sm font-normal text-gray-700 hover:bg-gray-100 active:text-zinc-800 active:no-underline disabled:pointer-events-none disabled:bg-transparent disabled:text-gray-400 dark:text-gray-200 dark:hover:bg-white/30"
                     @click="logout"
+                    to="/"
                     data-te-dropdown-item-ref
-                >Logout</a
+                >Logout</RouterLink
                 >
               </li>
             </ul>

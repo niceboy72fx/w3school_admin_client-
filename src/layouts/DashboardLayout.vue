@@ -1,50 +1,26 @@
 <script setup>
-import {Sidenav, Dropdown, Ripple, initTE} from "tw-elements";
-import {onMounted} from "vue";
 import Navigation from "../components/navigation/Navigation.vue";
+import Breadcrumbs from "../components/navigation/Breadcrumbs.vue";
 
-onMounted(async () => {
-  initTE({Sidenav, Dropdown, Ripple});
-
-  const sidenav2 = document.getElementById("sidenav-1");
-  const sidenavInstance2 = Sidenav.getInstance(sidenav2);
-
-  let innerWidth2 = null;
-
-  const setMode2 = (e) => {
-    // Check necessary for Android devices
-    if (window.innerWidth === innerWidth2) {
-      return;
-    }
-
-    innerWidth2 = window.innerWidth;
-
-    if (window.innerWidth < sidenavInstance2.getBreakpoint("xl")) {
-      sidenavInstance2.changeMode("over");
-      sidenavInstance2.hide();
-    } else {
-      sidenavInstance2.changeMode("side");
-      sidenavInstance2.show();
-    }
-  };
-
-  if (window.innerWidth < sidenavInstance2.getBreakpoint("sm")) {
-    setMode2();
-  }
-
-// Event listeners
-  window.addEventListener("resize", setMode2);
-})
 </script>
 
 <template>
-
   <Navigation/>
-  <!--Main layout-->
-  <main style="margin-top: 58px">
-    <div class="container"></div>
-  </main>
-  <!--Main layout-->
-
+  <main class="xl:pl-60 m-6 mt-20">
+      <div
+          class="max-w-[540px] sm:max-w-[604px] md:max-w-[720px] lg:max-w-[972px] xl:max-w-full xl:px-12 2xl:max-w-[1400px] mx-auto flex">
+        <div class="flex w-full flex-col">
+            <div class="lg:w-4/5 flex w-full flex-col px-3">
+              <Breadcrumbs/>
+              <hr class="my-6 dark:border-neutral-600">
+              <RouterView></RouterView>
+            </div>
+        </div>
+      </div>
+    </main>
 </template>
+
+<style>
+
+</style>
 

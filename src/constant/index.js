@@ -1,6 +1,7 @@
 import {COURSE_STATUS} from "./courseStatus";
 import {USER_STATUS} from "./userStatus";
 import {ROLE} from "./role";
+import {PERMISSION} from "./permission";
 
 function ucfirst(string){
     return string !== undefined ? string.charAt(0).toUpperCase() + string.slice(1).toLowerCase() : 123;
@@ -15,5 +16,9 @@ export function mapUserStatus(value){
 }
 
 export function mapUserRoles(value){
-    return value.map(role => ucfirst(Object.keys(ROLE).find(key => ROLE[key] === role))).toString();
+    return value.map(role => ucfirst(Object.keys(ROLE).find(key => ROLE[key] === role))).join(', ');
+}
+
+export function mapUserPermissions(value){
+    return value.map(permission => PERMISSION[permission.toUpperCase()]);
 }
