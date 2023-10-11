@@ -25,30 +25,59 @@ const router = createRouter({
             breadcrumb: 'Profile',
           },
         },
+        {
+          path: '/course',
+          name: 'course',
+          // component: () => import('../views/Course.vue'),
+          component: RouterView,
+          children: [
+            {
+              path: 'approved',
+              name: 'course_approved',
+              component: () => import('../components/course/CourseApproved.vue'),
+            },
+            {
+              path: 'pending',
+              name: 'course_pending',
+              component: () => import('../components/course/CoursePending.vue'),
+            },
+            {
+              path: 'rejected',
+              name: 'course_rejected',
+              component: () => import('../components/course/CourseRejected.vue'),
+            },
+          ]
+        },
+        {
+          path: '/account',
+          name: 'account',
+          component: () => import('../views/Account.vue'),
+          meta: {
+            breadcrumb: 'Account',
+          },
+          // component: RouterView,
+          children: [
+            {
+              path: 'client',
+              name: 'account_user',
+              component: () => import('../components/account/AccountClient.vue'),
+              meta: {
+                breadcrumb: 'Client',
+              },
+            },
+            {
+              path: 'cms',
+              name: 'account_admin',
+              component: () => import('../components/account/AccountCms.vue'),
+              meta: {
+                breadcrumb: 'Cms',
+              },
+            },
+          ]
+        },
       ]
     },
-    {
-      path: '/course',
-      name: 'course',
-      component: RouterView,
-      children: [
-        {
-          path: 'approved',
-          name: 'course_approved',
-          component: () => import('../components/course/CourseApproved.vue'),
-        },
-        {
-          path: 'pending',
-          name: 'course_pending',
-          component: () => import('../components/course/CoursePending.vue'),
-        },
-        {
-          path: 'rejected',
-          name: 'course_rejected',
-          component: () => import('../components/course/CourseRejected.vue'),
-        },
-      ]
-    },
+
     {
       path: '/topic',
       name: 'topic',
@@ -59,24 +88,7 @@ const router = createRouter({
       name: 'lesson',
       component: () => import('../views/Course.vue'),
     },
-    {
-      path: '/account',
-      name: 'account',
-      component: () => import('../views/Account.vue'),
-      // component: RouterView,
-      children: [
-        {
-          path: 'user',
-          name: 'account_user',
-          component: () => import('../components/account/AccountClient.vue'),
-        },
-        {
-          path: 'admin',
-          name: 'account_admin',
-          component: () => import('../components/account/AccountCms.vue'),
-        },
-      ]
-    },
+
     {
       path: '/login',
       name: 'login',

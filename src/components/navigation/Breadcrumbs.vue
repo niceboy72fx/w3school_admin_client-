@@ -5,6 +5,7 @@ import {computed} from "vue";
 const route = useRoute()
 const breadcrumbs = computed(() => {
   const crumbs = [];
+  console.log(1,route)
   for (const matched of route.matched) {
     if (matched.meta.breadcrumb) {
       crumbs.push({name: '>',})

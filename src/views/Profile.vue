@@ -4,7 +4,7 @@ import {ROLE} from "../constant/role";
 
 const {user} = useAuthStore()
 console.log(user)
-const ucfirst = (string) => {
+const ucFirst = (string) => {
   return string !== undefined ? string.charAt(0).toUpperCase() + string.slice(1).toLowerCase() : '';
 }
 </script>
@@ -44,15 +44,33 @@ const ucfirst = (string) => {
           Editor
         </label>
       </div>
-      <div class="col-span-3 row-span-3 flex items-end">
+      <div class="col-span-3 row-span-3 flex items-start">
         <img src="../assets/permission.svg" alt="" width="30" class="mr-2">
         Permissions
       </div>
       <template v-for="(permissionGroup, key) in user.permissions">
-        <div class="col-span-1">{{ ucfirst(key) }}</div>
+        <div class="col-span-1">{{ ucFirst(key) }}</div>
         <!--        <div class="col-span-7">{{ permissionGroup }}</div>-->
         <div class="col-span-8">
-          <div class="flex">
+          <div v-if="key === 'account'" class="block">
+            <div class="mb-2"
+                 v-for="(permissionGroupChild, key2) in permissionGroup">
+              <div class="mb-[0.125rem] mr-4 inline-block min-h-[1.5rem] pl-[1.5rem]"
+                   v-for="(value, permission) in permissionGroupChild">
+                <input
+                    class="checkbox "
+                    type="checkbox"
+                    :checked="value"
+                    id="inlineCheckbox3"
+                    disabled/>
+                <label
+                    class="inline-block pl-[0.15rem] hover:pointer-events-none"
+                    for="inlineCheckbox3"
+                >{{ ucFirst(permission) }}</label>
+              </div>
+            </div>
+          </div>
+          <div v-else class="flex">
             <div class="mb-[0.125rem] mr-4 inline-block min-h-[1.5rem] pl-[1.5rem]"
                  v-for="(value, permission) in permissionGroup">
               <input
@@ -64,8 +82,7 @@ const ucfirst = (string) => {
               <label
                   class="inline-block pl-[0.15rem] hover:pointer-events-none"
                   for="inlineCheckbox3"
-              >{{ ucfirst(permission) }}</label
-              >
+              >{{ ucFirst(permission) }}</label>
             </div>
           </div>
         </div>

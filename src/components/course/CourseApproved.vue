@@ -59,13 +59,11 @@ const actions = ['edit', 'delete']
 </script>
 
 <template>
-  <Course>
     <Table
         :columns="colums"
         :dataSource="dataSource"
         :actions="actions"
     />
-  </Course>
 </template>
 
 <style scoped>

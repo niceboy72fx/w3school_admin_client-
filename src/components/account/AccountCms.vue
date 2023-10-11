@@ -8,7 +8,7 @@ import {USER_STATUS} from "../../constant/userStatus";
 
 const userStore = useUserStore();
 
-function ucfirst(string) {
+function ucFirst(string) {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 await userStore.getListAccountCms()
@@ -86,14 +86,14 @@ const actions = ['edit']
             <label for="hs-select-label" class="block text-sm font-medium mb-2 dark:text-white">Roles</label>
             <select id="hs-select-label" class="py-3 px-4 pr-9 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400">
                 <option selected disabled>Choose a status</option>
-              <option v-for="(status,name) in USER_STATUS" :value="status">{{ ucfirst(name) }}</option>
+              <option v-for="(status,name) in USER_STATUS" :value="status">{{ ucFirst(name) }}</option>
             </select>
           </div>
           <div class="">
             <label for="hs-select-label" class="block text-sm font-medium mb-2 dark:text-white">Status</label>
             <select id="hs-select-label" class="py-3 px-4 pr-9 block w-full border-gray-200 rounded-md text-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-slate-900 dark:border-gray-700 dark:text-gray-400">
               <option selected disabled>Choose a status</option>
-              <option v-for="(status,name) in USER_STATUS" :value="status">{{ ucfirst(name) }}</option>
+              <option v-for="(status,name) in USER_STATUS" :value="status">{{ ucFirst(name) }}</option>
             </select>
           </div>
         </div>

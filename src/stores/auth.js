@@ -13,11 +13,11 @@ export const useAuthStore = defineStore('authStore', () => {
             permissions: {},
         })
 
-        function mapPermissionGroup(data){
+        function mapPermissionGroup(data) {
             const result = {
                 login: {
                     cms: false,
-                    client:false,
+                    client: false,
                 },
                 course: {
                     view: false,
@@ -26,14 +26,19 @@ export const useAuthStore = defineStore('authStore', () => {
                     approve: false,
                 },
                 account: {
-                    view: false,
-                    update: false,
-                    create: false,
+                    cms: {
+                        view: false,
+                        update: false,
+                        create: false,
+                    },
+                    client: {
+                        view: false,
+                        closure: false,
+                    }
                 },
             }
             data.forEach(function (permission) {
-                console.log(permission.toUpperCase())
-                switch (permission.toUpperCase()){
+                switch (permission.toUpperCase()) {
                     case "LOGIN_CMS":
                         result.login.cms = true;
                         break;
@@ -52,19 +57,26 @@ export const useAuthStore = defineStore('authStore', () => {
                     case "COURSE_APPROVE":
                         result.course.approve = true;
                         break;
-                    case "ACCOUNT_VIEW":
-                        result.course.view = true;
+                    case "ACCOUNT_CMS_VIEW":
+                        result.account.cms.view = true;
                         break;
-                    case "ACCOUNT_CREATE":
-                        result.course.create = true;
+                    case "ACCOUNT_CMS_UPDATE":
+                        result.account.cms.create = true;
                         break;
-                    case "ACCOUNT_UPDATE":
-                        result.course.update = true;
+                    case "ACCOUNT_CMS_CREATE":
+                        result.account.cms.update = true;
+                        break;
+                    case "ACCOUNT_CLIENT_VIEW":
+                        result.account.client.view = true;
+                        break;
+                    case "ACCOUNT_CLIENT_CLOSURE":
+                        result.account.client.closure = true;
                         break;
                 }
             })
             return result
         }
+
         // const doubleCount = computed(() => count.value * 2)
         async function login(formData) {
             try {
@@ -75,7 +87,7 @@ export const useAuthStore = defineStore('authStore', () => {
                 user.value.email = data.email
                 user.value.roles = data.roles
                 user.value.permissions = mapPermissionGroup(data.permissions)
-                await router.push('/')
+                await router.push({name: 'dashboard'})
             } catch (error) {
                 return error.response.data.errors
             }
@@ -105,7 +117,7 @@ export const useAuthStore = defineStore('authStore', () => {
             await api.post('reset-password', formData)
         }
 
-        async function profile(){
+        async function profile() {
             const {data} = await api.get('/api/admin/user')
             user.value = data.data
         }
