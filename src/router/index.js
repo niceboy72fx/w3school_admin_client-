@@ -7,6 +7,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'home',
       component: () => import('../layouts/DashboardLayout.vue'),
       children: [
         {
@@ -28,8 +29,7 @@ const router = createRouter({
         {
           path: '/course',
           name: 'course',
-          // component: () => import('../views/Course.vue'),
-          component: RouterView,
+          component: () => import('../views/Course.vue'),
           children: [
             {
               path: 'approved',
@@ -45,6 +45,11 @@ const router = createRouter({
               path: 'rejected',
               name: 'course_rejected',
               component: () => import('../components/course/CourseRejected.vue'),
+            },
+            {
+              path: 'add',
+              name: 'course_add',
+              component: () => import('../components/course/CourseAdd.vue'),
             },
           ]
         },

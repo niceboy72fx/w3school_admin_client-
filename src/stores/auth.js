@@ -87,7 +87,7 @@ export const useAuthStore = defineStore('authStore', () => {
                 user.value.email = data.email
                 user.value.roles = data.roles
                 user.value.permissions = mapPermissionGroup(data.permissions)
-                await router.push({name: 'dashboard'})
+                await router.go()
             } catch (error) {
                 return error.response.data.errors
             }
@@ -103,7 +103,7 @@ export const useAuthStore = defineStore('authStore', () => {
                     roles: [],
                     permissions: [],
                 }
-                await router.push('/login')
+                await router.go()
             } catch (error) {
                 return error.response.data.errors
             }
