@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory,RouterView } from 'vue-router'
+import {createRouter, createWebHistory, RouterView, useRoute} from 'vue-router'
 import Dashboard from '../views/Dashboard.vue'
 import {useAuthStore} from "../stores/auth";
 
@@ -30,11 +30,17 @@ const router = createRouter({
           path: '/course',
           name: 'course',
           component: () => import('../views/Course.vue'),
+          meta: {
+            breadcrumb: 'Course',
+          },
           children: [
             {
               path: 'approved',
               name: 'course_approved',
               component: () => import('../components/course/CourseApproved.vue'),
+              meta: {
+                breadcrumb: 'Approve',
+              },
             },
             {
               path: 'pending',
@@ -52,6 +58,14 @@ const router = createRouter({
               component: () => import('../components/course/CourseAdd.vue'),
             },
           ]
+        },
+        {
+          path: '/course/:type/:id',
+          name: 'course_detail',
+          component: () => import('../views/CourseDetail.vue'),
+          meta: {
+            breadcrumb: 'Course Detail',
+          },
         },
         {
           path: '/account',

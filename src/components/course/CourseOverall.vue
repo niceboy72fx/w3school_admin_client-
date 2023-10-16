@@ -8,7 +8,7 @@ import {
   Datatable,
   initTE, Input, Select,
 } from "tw-elements";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {COURSE_LEVEL, COURSE_STATUS} from "../../constant/course";
 import DateRangePicker from "vue3-daterange-picker";
 import Pagination from "../common/Pagination.vue";
@@ -63,13 +63,19 @@ onMounted(async () => {
     return course
   })
   const setActions = () => {
-    // document.querySelectorAll(".delete-btn").forEach((btn) => {
-    //   btn.addEventListener("click", () => {
-    //     console.log(
-    //         `send a message to ${btn.attributes["data-te-id"].value}`
-    //     );
-    //   });
-    // });
+    document.querySelectorAll(".edit-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        console.log(`call ${btn.attributes["data-te-id"].value}`);
+      });
+    });
+
+    document.querySelectorAll(".delete-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        console.log(
+            `send a message to ${btn.attributes["data-te-id"].value}`
+        );
+      });
+    });
   };
 
   datatable.addEventListener("render.te.datatable", setActions);
@@ -79,6 +85,8 @@ onMounted(async () => {
   })
 
 })
+
+watch(pagination, () => console.log(123))
 
 async function getListApproved() {
   const response = await courseStore.getListApproved(helper.toQueryString(formData.value))
@@ -144,6 +152,7 @@ function formatData(data) {
               data-te-ripple-init
               data-te-ripple-color="light"
               href="/course/approved/${row.id}"
+              data-te-id=${row.id}
               class="edit-btn cursor-pointer inline-block rounded-full border border-primary bg-primary text-white p-1.5 uppercase leading-normal shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
              <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.3" stroke="#3B71CA" class="w-4 h-4">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>

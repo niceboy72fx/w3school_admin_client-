@@ -1,16 +1,16 @@
 import {ref, computed} from 'vue'
 import {defineStore} from 'pinia'
-import course from "../../api/course";
+import api from "../apis";
 
 export const useCourseStore = defineStore('courseStore', () => {
         const listApproved = ref([])
         const listPending = ref([])
         const listRejected = ref([])
 
-        function getListApproved() {
-            course.getListApproved().then(function (data) {
-                listApproved.value = data.data
-            })
+        async function getListApproved(query = 'page=1&perPage=10') {
+            const {data} = await api.get('api/admin/course/approved?' + query)
+            listApproved.value = data.data.data
+            return data.data
         }
 
         return {listApproved, listPending, listRejected, getListApproved}

@@ -4,13 +4,9 @@ import Course from "../../views/Course.vue";
 import Table from "../common/Table.vue";
 import {useCourseStore} from "../../stores/course";
 import {mapCourseStatus} from "../../constant";
-import {COURSE_STATUS} from "../../constant/courseStatus";
+import {COURSE_STATUS} from "../../constant/course";
 
 const courseStore = useCourseStore();
-
-function ucfirst(string) {
-  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-}
 
 courseStore.getListApproved()
 const data = courseStore.listApproved.map(function (course) {

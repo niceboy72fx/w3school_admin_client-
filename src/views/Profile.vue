@@ -3,9 +3,7 @@ import {useAuthStore} from "../stores/auth";
 import {ROLE} from "../constant/role";
 
 const {user} = useAuthStore()
-const ucFirst = (string) => {
-  return string !== undefined ? string.charAt(0).toUpperCase() + string.slice(1).toLowerCase() : '';
-}
+
 </script>
 
 <template>

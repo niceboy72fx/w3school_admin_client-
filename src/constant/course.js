@@ -5,3 +5,9 @@ export const COURSE_STATUS = {
     INACTIVE: 4,
     REJECTED: 5,
 };
+
+export const COURSE_LEVEL = {
+    BEGINNER: 1,
+    INTERMEDIATE: 2,
+    ADVANCED: 3,
+};
