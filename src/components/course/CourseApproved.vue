@@ -173,6 +173,42 @@ function formatData(data) {
 </script>
 
 <template>
+<!--  <div-->
+<!--      class="fixed right-4 mb-3 inline-flex items-center rounded-lg bg-success-100 px-6 py-5 text-base text-success-700"-->
+<!--      role="alert">-->
+<!--  <span class="mr-2">-->
+<!--    <svg-->
+<!--        xmlns="http://www.w3.org/2000/svg"-->
+<!--        viewBox="0 0 24 24"-->
+<!--        fill="currentColor"-->
+<!--        class="h-5 w-5">-->
+<!--      <path-->
+<!--          fill-rule="evenodd"-->
+<!--          d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"-->
+<!--          clip-rule="evenodd"/>-->
+<!--    </svg>-->
+<!--  </span>-->
+<!--    Update course success-->
+<!--    <button-->
+<!--        type="button"-->
+<!--        class="ml-auto box-content rounded-none border-none p-1 text-warning-900 opacity-50 hover:text-warning-900 hover:no-underline hover:opacity-75 focus:opacity-100 focus:shadow-none focus:outline-none"-->
+<!--        data-te-alert-dismiss-->
+<!--        aria-label="Close">-->
+<!--    <span-->
+<!--        class="w-[1em] focus:opacity-100 disabled:pointer-events-none disabled:select-none disabled:opacity-25 [&.disabled]:pointer-events-none [&.disabled]:select-none [&.disabled]:opacity-25">-->
+<!--      <svg-->
+<!--          xmlns="http://www.w3.org/2000/svg"-->
+<!--          viewBox="0 0 24 24"-->
+<!--          fill="#0E7537"-->
+<!--          class="h-6 w-6">-->
+<!--        <path-->
+<!--            fill-rule="evenodd"-->
+<!--            d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"-->
+<!--            clip-rule="evenodd" />-->
+<!--      </svg>-->
+<!--    </span>-->
+<!--    </button>-->
+<!--  </div>-->
   <div class="grid grid-cols-12 gap-x-6 gap-y-2 mb-6">
     <label class="text-gray-400 col-span-3">Search</label>
     <label class="text-gray-400 col-span-2">Level</label>
@@ -201,7 +237,7 @@ function formatData(data) {
         <option :value="value" v-for="(value,name) in COURSE_STATUS">{{ ucFirst(name) }}</option>
       </select>
     </div>
-    <div class="col-span-2 ">
+    <div class="col-span-2">
       <button
           type="button"
           class="rounded px-3 mr-4 bg-primary pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"

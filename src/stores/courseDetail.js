@@ -20,8 +20,12 @@ export const useCourseDetailStore = defineStore('courseDetailStore', () => {
             courseDetail.value = data.data
         }
 
-        async function updateCourse(id) {
-            const {data} = await api.put(`api/admin/course/${id}/original`)
+        async function updateCourse(id, formData) {
+            const {data} = await api.post(`api/admin/course/${id}/original`, {_method: 'PUT', ...formData}, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+            })
             courseDetail.value = data.data
         }
 

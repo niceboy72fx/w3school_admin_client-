@@ -1,6 +1,4 @@
 <script setup>
-import ApplicationLogo from "../components/common/ApplicationLogo.vue";
-
 </script>
 
 <template>
