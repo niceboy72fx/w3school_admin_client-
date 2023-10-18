@@ -52,19 +52,24 @@ const router = createRouter({
               name: 'course_rejected',
               component: () => import('../components/course/CourseRejected.vue'),
             },
-            {
-              path: 'add',
-              name: 'course_add',
-              component: () => import('../components/course/CourseAdd.vue'),
-            },
+
           ]
         },
         {
           path: '/course/:type/:id',
           name: 'course_detail',
           component: () => import('../views/CourseDetail.vue'),
+          props: { isEdit: false},
           meta: {
             breadcrumb: 'Course Detail',
+          },
+        },
+        {
+          path: '/course/add',
+          name: 'course_add',
+          component: () => import('../views/CourseAdd.vue'),
+          meta: {
+            breadcrumb: 'Course Add',
           },
         },
         {
@@ -102,8 +107,16 @@ const router = createRouter({
             breadcrumb: 'Topic',
           },
           children: [
-            
           ]
+        },
+        {
+          path: '/topic/:id',
+          name: 'topic_detail',
+          component: () => import('../components/topic/TopicUpdate.vue'),
+          props: { isEdit: false},
+          meta: {
+            breadcrumb: 'Topic Detail',
+          },
         },
         {
           path: 'topic/add',

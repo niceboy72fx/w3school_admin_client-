@@ -29,7 +29,6 @@ function resetData() {
     formData.value.courseID = ''
 }
 
-
 </script>
 
 <template>

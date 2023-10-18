@@ -1,36 +1,38 @@
 
-
 <script setup>
 import {
   Ripple,
   Input,
   initTE
 } from "tw-elements";
-import {onMounted, ref} from 'vue'
+import {onMounted, ref} from "vue";
+import {useRoute} from "vue-router";
 import router from "../../router";
-import {useTopicStore} from "../../stores/topic"
-initTE({Ripple, Input });
+import { useTopicDetailStore } from "../../stores/topicDetail";
 
-const formData = ref({
+const route = useRoute()
+const topicDetailStore = useTopicDetailStore()
+
+const isEdit = true;
+const topicDetail = ref({
     id: '',
     name: '',
     position: '',
-    course_id: ''
+    course_id: '',
 })
 
-const topicStore = useTopicStore();
+onMounted( async () => {
+    //initTE({Ripple, Input });
+  await topicDetailStore.getTopicDetail(route.params.id);
+  Object.assign(topicDetail.value, topicDetailStore.topicDetail)
+})
 
-async function addTopicBtn() {
-    await topicStore.addTopic(formData.value)
-    router.push({name: 'topic'})
+
+
+const updateTopic = async () => {
+  await topicDetailStore.updateTopic(route.params.id, topicDetail.value)
+  router.go(-1)
 }
-
-function resetData() {
-    formData.value.name = ''
-    formData.value.position = ''
-    formData.value.courseID = ''
-}
-
 
 </script>
 
@@ -49,9 +51,8 @@ function resetData() {
         type="text"
         class="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
         id="topicNameInput"
-        aria-describedby="emailHelp"
         placeholder="Enter topic name" 
-        v-model="formData.name"/>
+        v-model="topicDetail.name"/>
     </div>
 
     <!--Topic position input-->
@@ -66,7 +67,7 @@ function resetData() {
         class="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
         id="topicPositionInput"
         placeholder="Topic position" 
-        v-model="formData.position"/>
+        v-model="topicDetail.position"/>
     </div>
 
     <!--Course ID input-->
@@ -77,7 +78,7 @@ function resetData() {
       >
         <select 
         data-te-select-init
-        v-model="formData.course_id">
+        v-model="topicDetail.course_id">
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -89,12 +90,12 @@ function resetData() {
     <!--Sign in button-->
     <div class="flex space-x-3">
         <button
-        @click="addTopicBtn"
+        @click="updateTopic"
         type="button"
         class="dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]] inline-block w-full rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
         data-te-ripple-init
         data-te-ripple-color="light">
-        Add
+        Update
         </button>
         <button
         @click="resetData"
