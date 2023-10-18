@@ -3,6 +3,7 @@ import {defineStore} from 'pinia'
 import api from "../apis";
 
 export const useCourseDetailStore = defineStore('courseDetailStore', () => {
+        const isEdit = ref(false)
         const courseDetail = ref({
             name: null,
             category_id: null,
@@ -14,6 +15,7 @@ export const useCourseDetailStore = defineStore('courseDetailStore', () => {
             description: null,
             created_at: null,
         })
+        const statusUpdate = ref(false)
 
         async function getCourseDetail(id) {
             const {data} = await api.get(`api/admin/course/${id}/original`)
@@ -26,10 +28,10 @@ export const useCourseDetailStore = defineStore('courseDetailStore', () => {
                     'Content-Type': 'multipart/form-data'
                 },
             })
-            courseDetail.value = data.data
+            statusUpdate.value = data.data
         }
 
-        return {courseDetail, getCourseDetail, updateCourse}
+        return {courseDetail, statusUpdate, getCourseDetail, updateCourse}
     },
     {
         persist: {
