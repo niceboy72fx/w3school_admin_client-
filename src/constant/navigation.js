@@ -61,3 +61,16 @@ export const account = [
         route_name: 'account_user',
     },
 ]
+
+export const topic = [
+    {
+        key: 'manage_topic',
+        value: 'Topic',
+        route_name: 'topic'
+    },
+    {
+        key: 'manage_topic_add',
+        value: 'TopicAdd',
+        route_name: 'topic_add'
+    }
+]

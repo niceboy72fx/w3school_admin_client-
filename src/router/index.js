@@ -94,13 +94,26 @@ const router = createRouter({
             },
           ]
         },
+        {
+          path: '/topic',
+          name: 'topic',
+          component: () => import('../views/Topic_View.vue'),
+          meta: {
+            breadcrumb: 'Topic',
+          },
+          children: [
+            
+          ]
+        },
+        {
+          path: 'topic/add',
+          name: 'topic_add',
+          component: () => import('../components/topic/TopicAdd.vue'),
+          meta: {
+            breadcrumb: 'Topic',
+          },
+        },
       ]
-    },
-
-    {
-      path: '/topic',
-      name: 'topic',
-      component: () => import('../views/Course.vue'),
     },
     {
       path: '/lesson',
