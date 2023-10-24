@@ -25,7 +25,11 @@ export const useCourseStore = defineStore('courseStore', () => {
         }
 
         async function addCourse(formData) {
-            const {data} = await api.post('api/admin/course/add', formData)
+            const {data} = await api.post('api/admin/course/add', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+            })
         }
 
         return {listApproved, listPending, listRejected, getListApproved, getListPending, getListRejected, addCourse}

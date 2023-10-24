@@ -37,7 +37,6 @@ const addCourse = async () => {
 
 const onFileChange = ($event) => {
   formData.value.logo = $event.target.files[0]
-  formData.value.logo_type = 'file'
 }
 </script>
 

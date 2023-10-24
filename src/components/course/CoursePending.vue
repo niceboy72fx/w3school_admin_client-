@@ -48,6 +48,8 @@ const data = ref({
   ],
   rows: [],
 });
+
+const listCheckBox = ref([])
 onMounted(async () => {
   initTE({Datatable, Input, Select, Button}, {allowReinits: true});
   const datatable = document.getElementById('datatable');
@@ -59,7 +61,7 @@ onMounted(async () => {
   })
   Object.assign(formData.value, {page: response.current_page, perPage: response.per_page})
   data.value.rows = courseStore.listPending.map((course, index) => {
-    course.stt = ((pagination.value.currentPage-1) * pagination.value.perPage) + index + 1
+    course.stt = ((pagination.value.currentPage - 1) * pagination.value.perPage) + index + 1
     course.status = mapCourseStatus(course.status)
     course.level = mapCourseLevel(course.level)
     return course
@@ -77,16 +79,30 @@ onMounted(async () => {
   datatable.addEventListener("render.te.datatable", setActions);
   const myDatatable = new Datatable(datatable, formatData(data.value));
   datatable.addEventListener('selectRows.te.datatable', (e) => {
-    console.log(e.selectedRows, e.selectedIndexes, e.allSelected);
+    listCheckBox.value = e.selectedIndexes
   })
-  const hideAlert = setTimeout(() => {courseDetailStore.statusUpdate = false}, 4000);
+
+  const hideAlert = setTimeout(() => {
+    courseDetailStore.statusUpdate = false
+  }, 4000);
 })
+
+const batchApproval = () => {
+  let temp = listCheckBox.value.map((rowIndex) => {
+    return document.querySelector("#datatable > div > table > tbody > tr[data-te-index='"+rowIndex+"'] > td:nth-child(10) > input[type=hidden]").value
+  })
+  console.log(temp)
+}
 
 async function getListPending() {
   const response = await courseStore.getListPending(helper.toQueryString(formData.value))
-  Object.assign(pagination.value, {currentPage: response.current_page, perPage:response.per_page, total: response.total})
+  Object.assign(pagination.value, {
+    currentPage: response.current_page,
+    perPage: response.per_page,
+    total: response.total
+  })
   data.value.rows = courseStore.listPending.map((course, index) => {
-    course.stt = ((pagination.value.currentPage-1) * pagination.value.perPage) + index + 1
+    course.stt = ((pagination.value.currentPage - 1) * pagination.value.perPage) + index + 1
     course.status = mapCourseStatus(course.status)
     course.level = mapCourseLevel(course.level)
     return course
@@ -151,7 +167,9 @@ function formatData(data) {
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
               </svg>
-            </a>`
+            </a>
+            <input data-te-id type="hidden" value="${row.id}">
+`
 //             +`
 //             <a
 //               type="button"
@@ -176,8 +194,8 @@ function formatData(data) {
 
 <template>
   <div v-if="courseDetailStore.statusUpdate"
-      class="fixed right-4 mb-3 inline-flex items-center rounded-lg bg-success-100 px-6 py-5 text-base text-success-700"
-      role="alert">
+       class="fixed right-4 mb-3 inline-flex items-center rounded-lg bg-success-100 px-6 py-5 text-base text-success-700"
+       role="alert">
   <span class="mr-2">
     <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -206,7 +224,7 @@ function formatData(data) {
         <path
             fill-rule="evenodd"
             d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
-            clip-rule="evenodd" />
+            clip-rule="evenodd"/>
       </svg>
     </span>
     </button>
@@ -215,7 +233,7 @@ function formatData(data) {
     <label class="text-gray-400 col-span-3">Search</label>
     <label class="text-gray-400 col-span-2">Level</label>
     <label class="text-gray-400 col-span-3">Created at</label>
-<!--    <label class="text-gray-400 col-span-3">Status</label>-->
+    <!--    <label class="text-gray-400 col-span-3">Status</label>-->
     <label class="text-gray-400 col-span-3"></label>
     <div class="relative col-span-3" data-te-input-wrapper-init>
       <input
@@ -234,12 +252,12 @@ function formatData(data) {
     <div class="col-span-3">
       <DateRangePicker :date-range="formData.range" :auto-apply="true" @update:model-value="updateDateRange"/>
     </div>
-<!--    <div class="col-span-2">-->
-<!--      <select data-te-select-init v-model="formData.status">-->
-<!--        <option :value="null" selected>Choose a status</option>-->
-<!--        <option :value="value" v-for="(value,name) in COURSE_STATUS">{{ ucFirst(name) }}</option>-->
-<!--      </select>-->
-<!--    </div>-->
+    <!--    <div class="col-span-2">-->
+    <!--      <select data-te-select-init v-model="formData.status">-->
+    <!--        <option :value="null" selected>Choose a status</option>-->
+    <!--        <option :value="value" v-for="(value,name) in COURSE_STATUS">{{ ucFirst(name) }}</option>-->
+    <!--      </select>-->
+    <!--    </div>-->
     <div class="col-span-2">
       <button
           type="button"
@@ -256,17 +274,18 @@ function formatData(data) {
     </div>
   </div>
   <div class="mt-3">
-    <RouterLink
-        :to="{name: 'course_add'}"
+    <button
+        @click="batchApproval"
         type="button"
         class="rounded px-5 mr-4 bg-primary pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
-      Add
-    </RouterLink>
+      Batch approval
+    </button>
   </div>
   <div
       id="datatable"
       data-te-fixed-header="true"
       data-te-max-height="480"
+      data-te-selectable="true"
       data-te-multi="true"
       data-te-striped="true"
       data-te-pagination="false">
