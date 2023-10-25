@@ -6,16 +6,16 @@ import {
 import {onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
 import DateRangePicker from 'vue3-daterange-picker'
-import {COURSE_LEVEL, COURSE_STATUS} from '../constant/course';
+import {COURSE_LEVEL, COURSE_STATUS, COURSE_STATUS_APPROVED} from '../constant/course';
 import {useCourseDetailStore} from "../stores/courseDetail";
 import {useCategoryStore} from "../stores/category";
 import router from "../router";
 
+const isEdit = true
 const route = useRoute()
 const courseDetailStore = useCourseDetailStore()
 const categoryStore = useCategoryStore()
-
-const isEdit = true;
+const authStore = useAuthStore()
 const courseDetail = ref({
   name: null,
   category_id: null,
@@ -39,12 +39,16 @@ onMounted(async () => {
 
 const updateCourse = async () => {
   await courseDetailStore.updateCourse(route.params.id, courseDetail.value);
-  router.go(-1)
+  await router.push({name: 'course_pending'})
 }
 
 const onFileChange = ($event) => {
   courseDetail.value.logo = $event.target.files[0]
   courseDetail.value.logo_type = 'file'
+}
+
+const rejectCourse = () => {
+  router.push({name: 'course_rejected'})
 }
 </script>
 
@@ -63,7 +67,7 @@ const onFileChange = ($event) => {
               class="w-24 rounded-full"
               alt="Avatar"/>
           <input
-              v-if="isEdit"
+              v-if="!authStore.user.permissions.course.update || !courseDetail.isEdit"
               type="file"
               @change="onFileChange"
               class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:peer-focus:text-primary [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
@@ -73,18 +77,19 @@ const onFileChange = ($event) => {
           <label class="text-gray-400">Name</label>
           <div class="relative" data-te-input-wrapper-init>
             <input
-                :disabled="!isEdit"
-                :class="{'bg-neutral-100': !isEdit}"
+                class="peer block min-h-[auto] w-full rounded border-0 px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:peer-focus:text-primary [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
+                :disabled="!authStore.user.permissions.course.update || !courseDetail.isEdit"
+                :class="!authStore.user.permissions.course.update || !courseDetail.isEdit ? 'bg-neutral-100' : 'bg-transparent'"
                 type="text"
                 v-model="courseDetail.name"
-                class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:peer-focus:text-primary [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
                 id="exampleFormControlInput1"/>
           </div>
         </div>
         <div class="col-span-3">
           <label class="text-gray-400">Category</label>
-          <select data-te-select-init v-model="courseDetail.category_id" :disabled="!isEdit"
-                  :class="{'bg-neutral-100': !isEdit}">
+          <select data-te-select-init v-model="courseDetail.category_id"
+                  :disabled="!authStore.user.permissions.course.update || !courseDetail.isEdit"
+                  :class="{'bg-neutral-100': !authStore.user.permissions.course.update || !courseDetail.isEdit}">
             <option :value="value.id" v-for="(value) in listCategory">{{ value.name }}</option>
           </select>
         </div>
@@ -120,11 +125,10 @@ const onFileChange = ($event) => {
                 id="exampleFormControlInput1"/>
           </div>
         </div>
-        <div class="col-span-3">
+        <div class="col-span-3" v-if="Object.values(COURSE_STATUS_APPROVED).includes(courseDetail.status)">
           <label class="text-gray-400">Status</label>
-          <select data-te-select-init v-model="courseDetail.status" :disabled="!isEdit"
-                  :class="{'bg-neutral-100': !isEdit}">
-            <option :value="value" v-for="(value,name) in COURSE_STATUS">{{ ucFirst(name) }}</option>
+          <select data-te-select-init v-model="courseDetail.status">
+            <option :value="value" v-for="(value,name) in COURSE_STATUS_APPROVED">{{ ucFirst(name) }}</option>
           </select>
         </div>
         <div class="col-span-12 mt-4">
@@ -146,18 +150,32 @@ const onFileChange = ($event) => {
     </section>
     <hr class="mb-5 dark:border-gray-600">
     <section>
-      <div class="flex justify-end">
+      <div class="flex justify-end mb-2">
         <button
-            v-if="isEdit"
+            v-if="authStore.user.permissions.course.approve && courseDetail.status === COURSE_STATUS.PENDING"
+            type="button"
+            class="mr-4 rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+            @click="updateCourse">
+          Approve
+        </button>
+        <button
+            v-if="authStore.user.permissions.course.approve && courseDetail.status === COURSE_STATUS.PENDING"
+            @click="rejectCourse"
+            type="button"
+            class="mr-4 rounded bg-danger px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#dc4c64] transition duration-150 ease-in-out hover:bg-danger-600 hover:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.3),0_4px_18px_0_rgba(220,76,100,0.2)] focus:bg-danger-600 focus:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.3),0_4px_18px_0_rgba(220,76,100,0.2)] focus:outline-none focus:ring-0 active:bg-danger-700 active:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.3),0_4px_18px_0_rgba(220,76,100,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(220,76,100,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.2),0_4px_18px_0_rgba(220,76,100,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.2),0_4px_18px_0_rgba(220,76,100,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.2),0_4px_18px_0_rgba(220,76,100,0.1)]">
+          Reject
+        </button>
+        <button
+            v-if="authStore.user.permissions.course.update && courseDetail.status !== COURSE_STATUS.INACTIVE && courseDetail.status !== COURSE_STATUS.REJECTED"
             type="button"
             class="mr-4 rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
             @click="updateCourse">
           Update
         </button>
         <button
-            @click="router.go(-1)"
+            @click="router.push({name: 'course_' + route.params.type})"
             type="button"
-            class="rounded bg-danger px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#dc4c64] transition duration-150 ease-in-out hover:bg-danger-600 hover:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.3),0_4px_18px_0_rgba(220,76,100,0.2)] focus:bg-danger-600 focus:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.3),0_4px_18px_0_rgba(220,76,100,0.2)] focus:outline-none focus:ring-0 active:bg-danger-700 active:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.3),0_4px_18px_0_rgba(220,76,100,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(220,76,100,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.2),0_4px_18px_0_rgba(220,76,100,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.2),0_4px_18px_0_rgba(220,76,100,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.2),0_4px_18px_0_rgba(220,76,100,0.1)]">
+            class="rounded bg-primary-100 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-primary-700 transition duration-150 ease-in-out hover:bg-primary-accent-100 focus:bg-primary-accent-100 focus:outline-none focus:ring-0 active:bg-primary-accent-200">
           Back
         </button>
       </div>

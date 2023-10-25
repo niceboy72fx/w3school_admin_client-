@@ -59,7 +59,6 @@ const router = createRouter({
           path: '/course/:type/:id',
           name: 'course_detail',
           component: () => import('../views/CourseDetail.vue'),
-          props: { isEdit: false},
           meta: {
             breadcrumb: 'Course Detail',
           },

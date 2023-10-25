@@ -66,11 +66,11 @@ onMounted(async () => {
     return course
   })
   const setActions = () => {
-    document.querySelectorAll(".edit-approve-btn").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        router.push({name: 'course_detail', params: {type: 'approved', id: btn.attributes["data-te-id"].value}})
-      });
-    });
+    // document.querySelectorAll(".edit-approve-btn").forEach((btn) => {
+    //   btn.addEventListener("click", () => {
+    //     router.push({name: 'course_detail', params: {type: 'approved', id: btn.attributes["data-te-id"].value}})
+    //   });
+    // });
   };
 
   datatable.addEventListener("render.te.datatable", setActions);
@@ -141,7 +141,7 @@ function formatData(data) {
               type="button"
               data-te-ripple-init
               data-te-ripple-color="light"
-              href="/course/pending/${row.id}"
+              href="/course/approved/${row.id}"
               class="edit-approve-btn cursor-pointer inline-block rounded-full border border-primary bg-primary text-white p-1.5 uppercase leading-normal shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
              <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.3" stroke="#3B71CA" class="w-4 h-4">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
