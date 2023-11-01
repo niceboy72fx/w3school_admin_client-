@@ -1,8 +1,7 @@
-import {ref, computed} from 'vue'
+import {ref} from 'vue'
 import {defineStore} from 'pinia'
 import router from "../router";
 import api from "../apis";
-import {PERMISSION} from "../constant/permission";
 
 export const useAuthStore = defineStore('authStore', () => {
         const isAuthenticate = ref(false)
@@ -122,7 +121,21 @@ export const useAuthStore = defineStore('authStore', () => {
             user.value = data.data
         }
 
-        return {isAuthenticate, user, login, logout, forgotPassword, resetPassword, profile}
+        async function loginGoogle() {
+            window.addEventListener("message", async (event) => {
+                let data = JSON.parse(event.data)
+                isAuthenticate.value = true
+                user.value.name = data.name
+                user.value.email = data.email
+                user.value.roles = data.roles
+                user.value.permissions = mapPermissionGroup(data.permissions)
+                await router.go()
+            });
+            const {data} = await api.get('http://localhost/redirect/google')
+            let popUp = await openPopupCenter(data.data)
+        }
+
+        return {isAuthenticate, user, login, logout, forgotPassword, resetPassword, profile, loginGoogle}
     },
     {
         persist: {
@@ -135,3 +148,26 @@ export const useAuthStore = defineStore('authStore', () => {
             ],
         }
     })
+
+function openPopupCenter(url) {
+    // Fixes dual-screen position                             Most browsers      Firefox
+    const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
+    const dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screenY;
+
+    const width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+    const height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+
+    const systemZoom = width / window.screen.availWidth;
+    const left = (width - 900) / 2 / systemZoom + dualScreenLeft
+    const top = (height - 700) / 2 / systemZoom + dualScreenTop
+    return window.open(url, 'GoogleLogin',
+        `
+      scrollbars=yes,
+      width=${900 / systemZoom},
+      height=${700 / systemZoom},
+      top=${top},
+      left=${left}
+      `
+    )
+
+}

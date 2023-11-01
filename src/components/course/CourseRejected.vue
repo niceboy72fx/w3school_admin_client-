@@ -255,7 +255,7 @@ function formatData(data) {
   <div
       id="datatable"
       data-te-fixed-header="true"
-      data-te-max-height="480"
+      data-te-max-height="420"
       data-te-striped="true"
       data-te-pagination="false">
   </div>

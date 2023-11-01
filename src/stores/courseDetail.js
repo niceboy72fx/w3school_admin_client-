@@ -33,7 +33,25 @@ export const useCourseDetailStore = defineStore('courseDetailStore', () => {
             statusUpdate.value = data.data
         }
 
-        return {courseDetail, isEdit, statusUpdate, getCourseDetail, updateCourse}
+        async function approveCourse(id) {
+            const {data} = await api.post(`api/admin/course/${id}/approve`, {_method: 'PUT', status: COURSE_STATUS.PENDING}, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+            })
+            statusUpdate.value = data.data
+        }
+
+        async function rejectCourse(id) {
+            const {data} = await api.post(`api/admin/course/${id}/reject`, {_method: 'PUT', status: COURSE_STATUS.PENDING}, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+            })
+            statusUpdate.value = data.data
+        }
+
+        return {courseDetail, isEdit, statusUpdate, getCourseDetail, updateCourse, approveCourse, rejectCourse}
     },
     {
         persist: {

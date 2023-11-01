@@ -9,7 +9,7 @@ import {
   initTE, Input, Select,
 } from "tw-elements";
 import {onMounted, ref} from "vue";
-import {COURSE_LEVEL, COURSE_STATUS} from "../../constant/course";
+import {COURSE_LEVEL, COURSE_STATUS, COURSE_STATUS_APPROVED} from "../../constant/course";
 import DateRangePicker from "vue3-daterange-picker";
 import Pagination from "../common/Pagination.vue";
 import {useCourseDetailStore} from "../../stores/courseDetail";
@@ -232,7 +232,7 @@ function formatData(data) {
     <div class="col-span-2">
       <select data-te-select-init v-model="formData.status">
         <option :value="null" selected>Choose a status</option>
-        <option :value="value" v-for="(value,name) in COURSE_STATUS">{{ ucFirst(name) }}</option>
+        <option :value="value" v-for="(value,name) in COURSE_STATUS_APPROVED">{{ ucFirst(name) }}</option>
       </select>
     </div>
     <div class="col-span-2">
@@ -261,7 +261,7 @@ function formatData(data) {
   <div
       id="datatable"
       data-te-fixed-header="true"
-      data-te-max-height="480"
+      data-te-max-height="430"
       data-te-striped="true"
       data-te-pagination="false">
   </div>

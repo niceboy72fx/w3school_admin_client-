@@ -4,11 +4,13 @@ import {useAuthStore} from "../stores/auth";
 import GuestLayout from "../layouts/GuestLayout.vue";
 import {onMounted} from "vue";
 import {Input, Ripple, initTE} from "tw-elements";
+import api from "../apis";
 
 onMounted(() => {
   initTE({Input, Ripple}, {allowReinits: true});
 });
 
+const authStore = useAuthStore();
 const formData = ref({
   email: '',
   password: '',
@@ -20,10 +22,14 @@ const errors = ref({
   email: []
 })
 const submit = async () => {
-  const authStore = useAuthStore();
   const data = await authStore.login(formData.value)
   Object.assign(errors.value, data)
 };
+
+const loginGoogle = async () => {
+
+  await authStore.loginGoogle()
+}
 </script>
 
 <template>
@@ -70,7 +76,7 @@ const submit = async () => {
             >Password
             </label>
           </div>
-<!--          <InputError class="mt-2" :message="errors.email.toString()"/>-->
+          <!--          <InputError class="mt-2" :message="errors.email.toString()"/>-->
           <div class="mb-6 text-sm text-red-600" v-show="errors.email.length > 0">
             {{ errors.email.toString() }}
           </div>
@@ -108,55 +114,55 @@ const submit = async () => {
               data-te-ripple-color="light">
             Login
           </button>
-
-          <!-- Divider -->
-                        <div
-                            class="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
-                          <p
-                              class="mx-4 mb-0 text-center font-semibold dark:text-neutral-200">
-                            OR
-                          </p>
-                        </div>
-
-                        <!-- Social login buttons -->
-                        <a
-                            class="mb-3 flex w-full items-center justify-center rounded bg-primary px-7 pb-2.5 pt-3 text-center text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-                            style="background-color: #3b5998"
-                            href="#!"
-                            role="button"
-                            data-te-ripple-init
-                            data-te-ripple-color="light">
-                          <!-- Facebook -->
-                          <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              class="mr-2 h-3.5 w-3.5"
-                              fill="currentColor"
-                              viewBox="0 0 24 24">
-                            <path
-                                d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
-                          </svg>
-                          Continue with Google
-                        </a>
-                        <a
-                            class="mb-3 flex w-full items-center justify-center rounded bg-info px-7 pb-2.5 pt-3 text-center text-sm font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#54b4d3] transition duration-150 ease-in-out hover:bg-info-600 hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:bg-info-600 focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] focus:outline-none focus:ring-0 active:bg-info-700 active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.3),0_4px_18px_0_rgba(84,180,211,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(84,180,211,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(84,180,211,0.2),0_4px_18px_0_rgba(84,180,211,0.1)]"
-                            style="background-color: #55acee"
-                            href="#!"
-                            role="button"
-                            data-te-ripple-init
-                            data-te-ripple-color="light">
-                          <!-- Twitter -->
-                          <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              class="mr-2 h-3.5 w-3.5"
-                              fill="currentColor"
-                              viewBox="0 0 24 24">
-                            <path
-                                d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
-                          </svg>
-                          Continue with Twitter
-                        </a>
         </form>
+        <!-- Divider -->
+        <div
+            class="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
+          <p
+              class="mx-4 mb-0 text-center font-semibold dark:text-neutral-200">
+            OR
+          </p>
+        </div>
+
+        <!-- Social login buttons -->
+        <button
+            class="btn-google mb-3 flex w-full items-center font-medium justify-center rounded px-7 pb-2.5 pt-3 text-center text-sm uppercase leading-normal bg-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+            @click="loginGoogle"
+            data-te-ripple-init
+            data-te-ripple-color="light">
+          <!-- Google -->
+          <svg class="mr-2 h-3.5 w-3.5" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
+            <g id="SVGRepo_iconCarrier">
+              <path
+                  d="M30.0014 16.3109C30.0014 15.1598 29.9061 14.3198 29.6998 13.4487H16.2871V18.6442H24.1601C24.0014 19.9354 23.1442 21.8798 21.2394 23.1864L21.2127 23.3604L25.4536 26.58L25.7474 26.6087C28.4458 24.1665 30.0014 20.5731 30.0014 16.3109Z"
+                  fill="#4285F4"></path>
+              <path
+                  d="M16.2863 29.9998C20.1434 29.9998 23.3814 28.7553 25.7466 26.6086L21.2386 23.1863C20.0323 24.0108 18.4132 24.5863 16.2863 24.5863C12.5086 24.5863 9.30225 22.1441 8.15929 18.7686L7.99176 18.7825L3.58208 22.127L3.52441 22.2841C5.87359 26.8574 10.699 29.9998 16.2863 29.9998Z"
+                  fill="#34A853"></path>
+              <path
+                  d="M8.15964 18.769C7.85806 17.8979 7.68352 16.9645 7.68352 16.0001C7.68352 15.0356 7.85806 14.1023 8.14377 13.2312L8.13578 13.0456L3.67083 9.64746L3.52475 9.71556C2.55654 11.6134 2.00098 13.7445 2.00098 16.0001C2.00098 18.2556 2.55654 20.3867 3.52475 22.2845L8.15964 18.769Z"
+                  fill="#FBBC05"></path>
+              <path
+                  d="M16.2864 7.4133C18.9689 7.4133 20.7784 8.54885 21.8102 9.4978L25.8419 5.64C23.3658 3.38445 20.1435 2 16.2864 2C10.699 2 5.8736 5.1422 3.52441 9.71549L8.14345 13.2311C9.30229 9.85555 12.5086 7.4133 16.2864 7.4133Z"
+                  fill="#EB4335"></path>
+            </g>
+          </svg>
+          Continue with Google
+        </button>
       </div>
     </div>
   </GuestLayout>
 </template>
+
+<style scoped>
+.btn-google {
+  color: #3864a5;
+
+  &:hover {
+    color: #3864a5;
+    background-color: #d1e3f8;
+  }
+}
+</style>
