@@ -99,9 +99,6 @@ function deleteItem(row) {
     }
 }
 
-
-
-
 </script>
 
 <template>

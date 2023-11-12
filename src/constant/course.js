@@ -6,6 +6,12 @@ export const COURSE_STATUS = {
     REJECTED: 5,
 };
 
+export const COURSE_STATUS_APPROVED = {
+    ACTIVE: 2,
+    PAUSE: 3,
+    INACTIVE: 4,
+};
+
 export const COURSE_LEVEL = {
     BEGINNER: 1,
     INTERMEDIATE: 2,

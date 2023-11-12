@@ -76,9 +76,6 @@ onMounted(async () => {
 
   datatable.addEventListener("render.te.datatable", setActions);
   const myDatatable = new Datatable(datatable, formatData(data.value));
-  datatable.addEventListener('selectRows.te.datatable', (e) => {
-    console.log(e.selectedRows, e.selectedIndexes, e.allSelected);
-  })
   const hideAlert = setTimeout(() => {courseDetailStore.statusUpdate = false}, 4000);
 })
 
@@ -255,19 +252,10 @@ function formatData(data) {
       </button>
     </div>
   </div>
-  <div class="mt-3">
-    <RouterLink
-        :to="{name: 'course_add'}"
-        type="button"
-        class="rounded px-5 mr-4 bg-primary pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
-      Add
-    </RouterLink>
-  </div>
   <div
       id="datatable"
       data-te-fixed-header="true"
-      data-te-max-height="480"
-      data-te-multi="true"
+      data-te-max-height="420"
       data-te-striped="true"
       data-te-pagination="false">
   </div>
