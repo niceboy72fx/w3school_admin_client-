@@ -101,7 +101,7 @@ const router = createRouter({
         {
           path: '/topic',
           name: 'topic',
-          component: () => import('../views/Topic_View.vue'),
+          component: () => import('../views/Topic.vue'),
           meta: {
             breadcrumb: 'Topic',
           },
@@ -130,7 +130,7 @@ const router = createRouter({
     {
       path: '/lesson',
       name: 'lesson',
-      component: () => import('../views/LessonView.vue'),
+      component: () => import('../views/Lesson.vue'),
     },
 
     {
