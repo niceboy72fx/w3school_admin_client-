@@ -6,8 +6,8 @@ import {
 } from "tw-elements";
 import {onMounted, ref} from 'vue'
 import router from "../../router";
-import {useTopicStore} from "../../stores/topic"
 initTE({Ripple, Input });
+import CKEditor from '@ckeditor/ckeditor5-vue';
 
 const formData = ref({
     id: '',
@@ -16,11 +16,12 @@ const formData = ref({
     course_id: ''
 })
 
-const topicStore = useTopicStore();
+data: {
+  editor: CKEditor
+}
 
-async function addTopicBtn() {
-    await topicStore.addTopic(formData.value)
-    router.push({name: 'topic'})
+async function addLessonBtn() {
+    router.push({name: 'lesson'})
 }
 
 function resetData() {
@@ -35,58 +36,45 @@ function resetData() {
 <div
   class="block max-w-sm rounded-lg bg-white p-6 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:bg-neutral-700">
   <form>
-    <!--Topic name input-->
+    <!--Lesson name input-->
     <div class="relative mb-6" data-te-input-wrapper-init>
         <label
-        for="topicNameInput"
+        for="lessonNameInput"
         class="pointer-events-none "
-        >Topic name</label
+        >Lesson name</label
       >
       <input
         type="text"
         class="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
-        id="topicNameInput"
+        id="lessonNameInput"
         aria-describedby="emailHelp"
-        placeholder="Enter topic name" 
+        placeholder="Enter Lesson name" 
         v-model="formData.name"/>
     </div>
 
-    <!--Topic position input-->
+    <!-- position input-->
     <div class="relative mb-6" data-te-input-wrapper-init>
         <label
-        for="topicPositionInput"
+        for="lessonPositionInput"
         class="pointer-events-none "
-        >Topic position</label
+        >Lesson position</label
       >
       <input
         type="number"
         class="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
-        id="topicPositionInput"
-        placeholder="Topic position" 
+        id="LessonPositionInput"
+        placeholder="Lesson position" 
         v-model="formData.position"/>
     </div>
 
-    <!--Course ID input-->
-    <div class="mb-6 px-3 fw" data-te-input-wrapper-init>
-        <label
-        class="pointer-events-none left-3 mr-4 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
-        >Course ID</label
-      >
-        <select 
-        data-te-select-init
-        v-model="formData.course_id">
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-        </select>
+    <div class="relative mb-6" data-te-input-wrapper-init>
+      <ckeditor :editor="editor" v-model="editorData"></ckeditor>
     </div>
     
-    <!--Sign in button-->
+    <!--Add button-->
     <div class="flex space-x-3">
         <button
-        @click="addTopicBtn"
+        @click="addLessonBtn"
         type="button"
         class="dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]] inline-block w-full rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
         data-te-ripple-init

@@ -74,3 +74,11 @@ export const topic = [
         route_name: 'topic_add'
     }
 ]
+
+export const lesson = [
+    {
+        key: 'manage_lesson',
+        value: 'Lesson',
+        route_name: 'lesson'
+    },
+]

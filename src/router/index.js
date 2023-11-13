@@ -101,7 +101,7 @@ const router = createRouter({
         {
           path: '/topic',
           name: 'topic',
-          component: () => import('../views/Topic.vue'),
+          component: () => import('../views/Topic-view.vue'),
           meta: {
             breadcrumb: 'Topic',
           },
@@ -125,14 +125,24 @@ const router = createRouter({
             breadcrumb: 'Topic',
           },
         },
+        {
+          path: '/lesson',
+          name: 'lesson',
+          component: () => import('../views/Lesson-view.vue'),
+          meta: {
+            breadcrumb: 'Lesson',
+          },
+        },
+        {
+          path: '/lesson/add',
+          name: 'lesson_add',
+          component: () => import('../components/lesson/Lesson-Add.vue'),
+          meta: {
+            breadcrumb: 'Lesson',
+          },
+        },
       ]
     },
-    {
-      path: '/lesson',
-      name: 'lesson',
-      component: () => import('../views/Lesson.vue'),
-    },
-
     {
       path: '/login',
       name: 'login',

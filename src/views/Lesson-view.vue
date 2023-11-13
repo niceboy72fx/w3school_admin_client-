@@ -5,30 +5,30 @@ import {
   Button,
   initTE,
 } from "tw-elements";
-import {useTopicStore} from '../stores/topic'
 import router from '../router'
-const topicStore = useTopicStore();
+import {lessonData, topicData} from '../stores/data'
 
 const formData = ref({
   id: '',
+  topic_id: '',
   name: '',
-  position: '',
-  course_id: '',
+  status: '',
+  position: ''
 })
 
 const data = ref({
   columns: [
-    { label: "Topic name", field: "name" },
-    { label: "Topic position", field: "position" },
-    { label: "Course ID", field: "course_id" },
-    { label: "Action", field: "action", sort: false },
+    { label: "ID", field: "ID" },
+    { label: "Topic ID", field: "topic_id" },
+    { label: "Lesson name", field: "name" },
+    { label: "Status", field: "status" },
+    { label: "Position", field: "position" },
   ],
   rows: [],
 });
 
 onMounted(async() => {
-  await topicStore.getListTopic(1)
-  initTE({ Button, Datatable });
+  initTE({ Button, Datatable, });
   const customDatatable = document.getElementById("datatable");
 
 const setActions = () => {
@@ -49,8 +49,7 @@ const setActions = () => {
 };
 
 customDatatable.addEventListener("render.te.datatable", setActions);
-topicStore.getListTopic(1)
-data.value.rows = topicStore.listTopic
+data.value.rows = lessonData
 console.log(data.value.rows)
 new Datatable(
   customDatatable,
@@ -99,6 +98,9 @@ function deleteItem(row) {
     }
 }
 
+
+
+
 </script>
 
 <template>
@@ -107,7 +109,7 @@ function deleteItem(row) {
     <div class="inline-block min-w-full py-2 sm:px-6 lg:px-8">
       <div class="overflow-hidden">
         <RouterView></RouterView>
-        <RouterLink :to="{name: 'topic_add'}">
+        <RouterLink :to="{name: 'lesson_add'}">
           <button
             @click="addTopic"
             type="button"
