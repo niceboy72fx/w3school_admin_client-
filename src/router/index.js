@@ -52,7 +52,6 @@ const router = createRouter({
               name: 'course_rejected',
               component: () => import('../components/course/CourseRejected.vue'),
             },
-
           ]
         },
         {
@@ -78,11 +77,10 @@ const router = createRouter({
           meta: {
             breadcrumb: 'Account',
           },
-          // component: RouterView,
           children: [
             {
               path: 'client',
-              name: 'account_user',
+              name: 'account_client',
               component: () => import('../components/account/AccountClient.vue'),
               meta: {
                 breadcrumb: 'Client',
@@ -90,7 +88,7 @@ const router = createRouter({
             },
             {
               path: 'cms',
-              name: 'account_admin',
+              name: 'account_cms',
               component: () => import('../components/account/AccountCms.vue'),
               meta: {
                 breadcrumb: 'Cms',

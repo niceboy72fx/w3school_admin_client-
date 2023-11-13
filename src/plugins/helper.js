@@ -13,8 +13,12 @@ function toQueryString(formData) {
     return Object.keys(formData)
         .filter(key => formData[key] != null && formData[key] !== '' && formData[key] !== undefined)
         .map(key => {
-            if (typeof formData[key] === 'object') {
+            if(Array.isArray(formData[key])) {
+                return `${key}=${formData[key].join(',')}`;
+            }
+            else if (typeof formData[key] === 'object') {
                 return toQueryString(formData[key])
-            } else return `${key}=${encodeURIComponent(formData[key])}`;
+            }
+            else return `${key}=${encodeURIComponent(formData[key])}`;
         }).join('&')
 }
