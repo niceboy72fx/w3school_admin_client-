@@ -8,8 +8,8 @@ import {
 } from "tw-elements";
 import {onMounted, ref} from 'vue'
 import router from "../../router";
-import { lessonData } from "../../stores/data";
 import {useLessonStore} from '../../stores/lesson'
+import { lessonData } from "../../stores/data";
 
 const lessonStore = useLessonStore();
 onMounted(() => {

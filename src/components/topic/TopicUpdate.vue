@@ -27,8 +27,6 @@ onMounted( async () => {
   Object.assign(topicDetail.value, topicDetailStore.topicDetail)
 })
 
-
-
 const updateTopic = async () => {
   await topicDetailStore.updateTopic(route.params.id, topicDetail.value)
   router.go(-1)

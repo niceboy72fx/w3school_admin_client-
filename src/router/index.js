@@ -141,6 +141,22 @@ const router = createRouter({
             breadcrumb: 'Lesson',
           },
         },
+        {
+          path: '/lesson/update',
+          name: 'lesson_update',
+          component: () => import('../components/lesson/Lesson-Update.vue'),
+          meta: {
+            breadcrumb: 'Lesson',
+          },
+        },
+        {
+          path: '/lesson/addDetails',
+          name: 'lesson_add_details',
+          component: () => import('../components/lesson/LessonDetail-Add.vue'),
+          meta: {
+            breadcrumb: 'Lesson',
+          },
+        },  
       ]
     },
     {

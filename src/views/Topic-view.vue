@@ -9,13 +9,6 @@ import {useTopicStore} from '../stores/topic'
 import router from '../router'
 const topicStore = useTopicStore();
 
-const formData = ref({
-  id: '',
-  name: '',
-  position: '',
-  course_id: '',
-})
-
 const data = ref({
   columns: [
     { label: "Topic name", field: "name" },
