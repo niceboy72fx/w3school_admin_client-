@@ -1,21 +1,22 @@
 import {ref, computed} from 'vue'
 import {defineStore} from 'pinia'
 import account from "../../api/account";
+import api from "../apis";
 
 export const useUserStore = defineStore('userStore', () => {
         const listAccountClient = ref([])
         const listAccountCms = ref([])
 
-        function getListAccountClient() {
-            account.getListAccountClient().then(function (data) {
-                listAccountClient.value = data.data
-            })
+        async function getListAccountClient(query = 'page=1&perPage=10') {
+            const {data} = await api.get('api/admin/account/client?' + query)
+            listAccountClient.value = data.data.data
+            return data.data
         }
 
-        async function getListAccountCms() {
-            await account.getListAccountCms().then(function (data) {
-                listAccountCms.value = data.data
-            })
+        async function getListAccountCms(query = 'page=1&perPage=10') {
+            const {data} = await api.get('api/admin/account/cms?' + query)
+            listAccountCms.value = data.data.data
+            return data.data
         }
 
         return {listAccountClient, listAccountCms, getListAccountClient, getListAccountCms}

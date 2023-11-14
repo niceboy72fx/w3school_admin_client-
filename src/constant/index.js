@@ -1,5 +1,5 @@
 import {COURSE_LEVEL, COURSE_STATUS} from "./course";
-import {USER_STATUS} from "./userStatus";
+import {USER_STATUS} from "./user";
 import {ROLE} from "./role";
 import {PERMISSION} from "./permission";
 function ucFirst(string) {
