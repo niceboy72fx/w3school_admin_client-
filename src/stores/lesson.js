@@ -1,31 +1,35 @@
-import {ref} from 'vue'
-import {defineStore} from 'pinia'
-import {lessonData, lessonDetail } from './data'
-export const useLessonStore = defineStore('lessonStore', () => {
+import { ref } from 'vue'
+import { defineStore } from 'pinia'
+import { lessonData, lessonDetailFake } from './data'
+export const useLessonStore = defineStore(
+  'lessonStore',
+  () => {
     const listLesson = ref([])
     const lesson = ref([])
 
     function getListLesson() {
-        const data = lessonData
-        listLesson.value = data
-        return data
+      const data = lessonData
+      listLesson.value = data
+      return data
     }
 
     function addLesson(formData) {
-        return formData.value
+      listLesson.value.push({ ...formData })
     }
 
-    function updateLesson(formData, id) {
-        lesson.value = listLesson[id]
-        return lesson.value
+    function updateLesson(formData) {
+      const indexToUpdate = listLesson.value.findIndex((item) => item.id === formData.id)
+      if (indexToUpdate !== -1) {
+        listLesson.value[indexToUpdate] = formData
+      }
     }
 
-    return {lesson, lessonDetail, getListLesson, addLesson, updateLesson}
-},
+    return { lesson, lessonDetailFake, listLesson, getListLesson, addLesson, updateLesson }
+  },
 
-
-{
+  {
     persist: {
-        enabled: true
+      enabled: false
     }
-})
+  }
+)

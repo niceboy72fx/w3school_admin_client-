@@ -5,31 +5,50 @@ import {
   Input,
   initTE
 } from "tw-elements";
-import {onMounted, ref} from "vue";
+import {onMounted, reactive} from "vue";
 import {useRoute} from "vue-router";
 import router from "../../router";
 import { useTopicDetailStore } from "../../stores/topicDetail";
+import { useVuelidate } from '@vuelidate/core'
+import { required, helpers } from '@vuelidate/validators'
 
 const route = useRoute()
 const topicDetailStore = useTopicDetailStore()
 
 const isEdit = true;
-const topicDetail = ref({
-    id: '',
-    name: '',
-    position: '',
-    course_id: '',
+const topicDetail = reactive({
+  id: '',
+  name: '',
+  position: '',
+  course_id: ''
 })
+
+
+const rules = {
+  name: {
+    required: helpers.withMessage('This field cannot be empty', required)
+  },
+  position: {
+    required: helpers.withMessage('This field cannot be empty', required)
+  },
+  course_id: {
+    required: helpers.withMessage('This field cannot be empty', required)
+  }
+}
+const v$ = useVuelidate(rules, topicDetail)
 
 onMounted( async () => {
     //initTE({Ripple, Input });
   await topicDetailStore.getTopicDetail(route.params.id);
-  Object.assign(topicDetail.value, topicDetailStore.topicDetail)
+  Object.assign(topicDetail, topicDetailStore.topicDetail)
 })
 
 const updateTopic = async () => {
-  await topicDetailStore.updateTopic(route.params.id, topicDetail.value)
-  router.go(-1)
+  const result = await v$.value.$validate()
+  if (result) {
+    await topicDetailStore.updateTopic(route.params.id, topicDetail)
+    router.go(-1)
+  }
 }
 
 </script>
@@ -45,12 +64,17 @@ const updateTopic = async () => {
         class="pointer-events-none "
         >Topic name</label
       >
+      <div :class="{ error: v$.name.$errors.length }">
       <input
         type="text"
         class="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
         id="topicNameInput"
         placeholder="Enter topic name" 
         v-model="topicDetail.name"/>
+        <div class="input-errors" v-for="error of v$.name.$errors" :key="error.$uid">
+            <div class="error-msg">{{ error.$message }}</div>
+          </div>
+      </div>
     </div>
 
     <!--Topic position input-->
@@ -60,16 +84,22 @@ const updateTopic = async () => {
         class="pointer-events-none "
         >Topic position</label
       >
+      <div :class="{ error: v$.position.$errors.length }">
       <input
         type="number"
         class="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
         id="topicPositionInput"
         placeholder="Topic position" 
         v-model="topicDetail.position"/>
+        <div class="input-errors" v-for="error of v$.position.$errors" :key="error.$uid">
+            <div class="error-msg">{{ error.$message }}</div>
+          </div>
+      </div>
     </div>
 
     <!--Course ID input-->
     <div class="mb-6 px-3 fw" data-te-input-wrapper-init>
+      <div :class="{ error: v$.course_id.$errors.length }">
         <label
         class="pointer-events-none left-3 mr-4 top-0 mb-0 max-w-[90%] origin-[0_0] truncate pt-[0.37rem] leading-[1.6] text-neutral-500 transition-all duration-200 ease-out peer-focus:-translate-y-[0.9rem] peer-focus:scale-[0.8] peer-focus:text-primary peer-data-[te-input-state-active]:-translate-y-[0.9rem] peer-data-[te-input-state-active]:scale-[0.8] motion-reduce:transition-none dark:text-neutral-200 dark:peer-focus:text-primary"
         >Course ID</label
@@ -83,6 +113,10 @@ const updateTopic = async () => {
             <option value="4">4</option>
             <option value="5">5</option>
         </select>
+        <div class="input-errors" v-for="error of v$.course_id.$errors" :key="error.$uid">
+            <div class="error-msg">{{ error.$message }}</div>
+          </div>
+      </div>
     </div>
     
     <!--Sign in button-->
@@ -109,5 +143,7 @@ const updateTopic = async () => {
 </template>
 
 <style scoped>
-
+.error-msg {
+  color: red;
+}
 </style>

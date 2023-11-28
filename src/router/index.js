@@ -148,13 +148,53 @@ const router = createRouter({
           },
         },
         {
-          path: '/lesson/addDetails',
+          path: '/lesson/lessonDetails',
+          name: 'lesson_view_details',
+          component: () => import('../components/lesson/LessonDetail-View.vue'),
+          meta: {
+            breadcrumb: 'Lesson Detail',
+          },
+        },
+        {
+          path: '/lesson/lessonDetails/addDetails',
           name: 'lesson_add_details',
           component: () => import('../components/lesson/LessonDetail-Add.vue'),
           meta: {
-            breadcrumb: 'Lesson',
+            breadcrumb: 'Lesson Detail',
           },
-        },  
+        },
+        {
+          path: '/lesson/lessonDetails/updateDetails',
+          name: 'lesson_update_details',
+          component: () => import('../components/lesson/LessonDetail-Update.vue'),
+          meta: {
+            breadcrumb: 'Lesson Detail',
+          },
+        },
+        {
+          path: '/lesson/lessonDetails/exercises',
+          name: 'exercises_view',
+          component: () => import('../components/lesson/Exercises-View.vue'),
+          meta: {
+            breadcrumb: 'Exercises',
+          },
+        },
+        {
+          path: '/lesson/lessonDetails/exercises',
+          name: 'exercises_add',
+          component: () => import('../components/lesson/Exercises-Add.vue'),
+          meta: {
+            breadcrumb: 'Exercises',
+          },
+        },
+        {
+          path: '/lesson/lessonDetails/exercises',
+          name: 'exercises_update',
+          component: () => import('../components/lesson/Exercises-Update.vue'),
+          meta: {
+            breadcrumb: 'Exercises',
+          },
+        },
       ]
     },
     {
@@ -177,19 +217,20 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-  if(!authStore.isAuthenticate){
-    switch (to.name) {
-      case 'login':
-      case 'forgot-password':
-      case 'password-reset':
-        next();
-        break;
-      default:
-        next({name: 'login'});
-        break;
-    }
-  }
-  else if (authStore.isAuthenticate && (to.name === 'login' || to.name === 'forgot-password')) next({name: 'dashboard'})
+  // if(!authStore.isAuthenticate){
+  //   switch (to.name) {
+  //     case 'login':
+  //     case 'forgot-password':
+  //     case 'password-reset':
+  //       next();
+  //       break;
+  //     default:
+  //       next({name: 'login'});
+  //       break;
+  //   }
+  // }
+  // else
+  if (authStore.isAuthenticate && (to.name === 'login' || to.name === 'forgot-password')) next({name: 'dashboard'})
   else next()
 })
 

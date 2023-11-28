@@ -95,11 +95,36 @@ export const lessonData = [
     }
 ]
 
-export const lessonDetail = [
+export const lessonDetailFake = [
     {
         id: 1,
         lesson_id: 1,
         title: 'Easy Learning with HTML "Try it yourself"',
-        content: '<p>With our "Try it Yourself" editor, you can edit the HTML code and view the result:</p>$example<p><strong>Click on the "Try it Yourself" button to see how it works.</strong></p>'
+        content: '<p>With our "Try it Yourself" editor, you can edit the HTML code and view the result:</p>$example<p><strong>Click on the "Try it Yourself" button to see how it works.</strong></p>',
+        position: 1
+    },
+    {
+        id: 2,
+        lesson_id: 1,
+        title: 'Easy Learning with HTML "Try it yourself" v123',
+        content: '<p>With our "Try it Yourself" editor, you can edit the HTML code and view the result:</p>$example<p><strong>Click on the "Try it Yourself" button to see how it works.</strong></p>',
+        position: 1
     }
+]
+
+export const exercisesFake = [
+    {
+        id: 1,
+        lesson_detail_id: 1,
+        language: 'En',
+        content: '<p>With our "Try it Yourself" editor, you can edit the HTML code and view the result:</p>$example<p><strong>Click on the "Try it Yourself" button to see how it works.</strong></p>',
+        status: 1
+    },
+    {
+        id: 2,
+        lesson_detail_id: 1,
+        language: 'En',
+        content: '<p>With our "Try it Yourself" editor, you can edit the HTML code and view the result:</p>$example<p><strong>Click on the "Try it Yourself" button to see how it works.</strong></p>',
+        status: 1
+    },
 ]

@@ -35,7 +35,9 @@ const setActions = () => {
     btn.addEventListener("click", () => {
       const index = btn.attributes["data-te-id"].value - 1;
       if (index !== -1) {
-        this.data.splice(index, 1);
+        data.value.rows.splice(index, 1);
+         // render lại bảng
+          // to do
       }
     });
   });
