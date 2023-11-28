@@ -97,6 +97,14 @@ const router = createRouter({
           ]
         },
         {
+          path: '/account/add',
+          name: 'account_add',
+          component: () => import('../views/AccountAdd.vue'),
+          meta: {
+            breadcrumb: 'Account Add',
+          },
+        },
+        {
           path: '/topic',
           name: 'topic',
           component: () => import('../views/Topic-view.vue'),
