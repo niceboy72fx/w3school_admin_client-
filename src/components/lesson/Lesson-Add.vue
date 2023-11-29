@@ -4,21 +4,28 @@ import { onMounted, reactive } from 'vue'
 import router from '../../router'
 import { lessonData } from '../../stores/data'
 import { useLessonStore } from '../../stores/lesson'
+import { useTopicStore } from '../../stores/topic'
 import { useVuelidate } from '@vuelidate/core'
 import { required, helpers } from '@vuelidate/validators'
 
 const lessonStore = useLessonStore()
+const topicStore = useTopicStore()
 onMounted(() => {
   initTE({ Ripple, Input, Select, Validation })
+  topicStore.getListTopic(1)
+  console.log(topicStore.listTopic)
 })
 
 // fake data
-const topicData = [
-  { id: 1, topic_name: 'test1' },
-  { id: 2, topic_name: 'test2' },
-  { id: 3, topic_name: 'test3' },
-  { id: 4, topic_name: 'test4' }
-]
+// const topicData = [
+//   { id: 1, topic_name: 'test1' },
+//   { id: 2, topic_name: 'test2' },
+//   { id: 3, topic_name: 'test3' },
+//   { id: 4, topic_name: 'test4' }
+// ]
+
+const topicData = topicStore.listTopic
+
 
 const formData = reactive({
   id: 0,
@@ -111,7 +118,7 @@ function resetData() {
             class="peer block min-h-[auto] w-full rounded border-2 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear"
           >
             <option v-for="topic in topicData" v-bind:key="topic.id" :value="topic.id">
-              {{ topic.topic_name }}
+              {{ topic.name }}
             </option>
           </select>
           <div class="input-errors" v-for="error of v$.topic_id.$errors" :key="error.$uid">
