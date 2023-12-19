@@ -2,11 +2,16 @@
 import {useAuthStore} from "../stores/auth";
 import {ROLE} from "../constant/role";
 import {onMounted, ref} from "vue";
-import {Button, initTE, Input, Select, Validation} from "tw-elements";
+import {Button, Validation, initTE, Input, Select} from "tw-elements";
 import router from "../router";
+import {useUserStore} from "../stores/user";
+import {useAccountDetailStore} from "../stores/accountDetail";
+import {useRoute} from "vue-router";
 
-const authStore = useAuthStore()
-const userDetail = ref({
+const route = useRoute()
+const userStore = useUserStore();
+const accountDetailStore = useAccountDetailStore()
+const accountDetail = ref({
   name: null,
   email: null,
   roles: [2],
@@ -32,13 +37,16 @@ const userDetail = ref({
 })
 onMounted(async () => {
   initTE({Validation, Input, Select, Button}, {allowReinits: true});
-  Object.assign(userDetail.value, authStore.user)
-  const fullValidationForm = document.getElementById("formProfile");
+
+  await accountDetailStore.getAccountDetail(route.params.id);
+  Object.assign(accountDetail.value, accountDetailStore.accountDetail)
+  const fullValidationForm = document.getElementById("formAccountAdd");
   const fullValidation = new Validation(fullValidationForm, {
     submitCallback: async (e, valid) => {
       if (valid) {
         try {
-          await authStore.updateProfile(userDetail.value);
+          await userStore.addAccount(accountDetail.value);
+          await router.push({name: 'account_cms'})
         } catch (error) {
           let el = document.querySelector('#formEmailInputGroup span')
           el.innerHTML = error.response.data.message
@@ -56,8 +64,8 @@ onMounted(async () => {
 </script>
 
 <template>
-  <form id="formProfile">
   <div class="w-full">
+    <form id="formAccountAdd">
     <div class="grid grid-cols-12 gap-4">
       <div class="col-span-3 flex">
         Name
@@ -69,7 +77,7 @@ onMounted(async () => {
         >
           <input
               type="text"
-              v-model="userDetail.name"
+              v-model="accountDetail.name"
               placeholder="Name"
               class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:peer-focus:text-primary [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
               id="formInputName"/>
@@ -88,7 +96,7 @@ onMounted(async () => {
           <input
               placeholder="Email address"
               type="text"
-              v-model="userDetail.email"
+              v-model="accountDetail.email"
               class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:peer-focus:text-primary [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
               id="formInputEmail"/>
         </div>
@@ -97,27 +105,25 @@ onMounted(async () => {
         Roles
       </div>
       <div class="col-span-3">
-        <input class="checkbox" type="checkbox" value="" id="flexCheckDisabled"
-               :checked="userDetail.roles.includes(ROLE.ADMIN)" disabled/>
+        <input class="checkbox cursor-pointer" type="checkbox" :value="ROLE.ADMIN" id="roleAdminCheckbox" v-model="accountDetail.roles"/>
         <label
-            class="inline-block pl-[0.15rem] hover:pointer-events-none"
-            for="flexCheckDisabled">
+            class="inline-block pl-[0.15rem] cursor-pointer"
+            for="roleAdminCheckbox">
           Admin
         </label>
       </div>
       <div class="col-span-6">
-        <input class="checkbox" type="checkbox" value="" id="flexCheckDisabled"
-               :checked="userDetail.roles.includes(ROLE.EDITOR)" disabled/>
+        <input class="checkbox cursor-pointer" type="checkbox" :value="ROLE.EDITOR" id="roleEditorCheckbox" v-model="accountDetail.roles"/>
         <label
-            class="inline-block pl-[0.15rem] hover:pointer-events-none"
-            for="flexCheckDisabled">
+            class="inline-block pl-[0.15rem] cursor-pointer"
+            for="roleEditorCheckbox">
           Editor
         </label>
       </div>
       <div class="col-span-3 row-span-3 flex items-start">
         Permissions
       </div>
-      <template v-for="(permissionGroup, key) in userDetail.permissions">
+      <template v-for="(permissionGroup, key) in accountDetail.permissions">
         <div class="col-span-1">{{ ucFirst(key) }}</div>
         <!--        <div class="col-span-7">{{ permissionGroup }}</div>-->
         <div class="col-span-8">
@@ -131,7 +137,7 @@ onMounted(async () => {
                     type="checkbox"
                     :checked="value"
                     id="inlineCheckbox3"
-                    disabled/>
+                />
                 <label
                     class="inline-block pl-[0.15rem] hover:pointer-events-none"
                     for="inlineCheckbox3"
@@ -147,7 +153,7 @@ onMounted(async () => {
                   type="checkbox"
                   :checked="value"
                   id="inlineCheckbox3"
-                  disabled/>
+              />
               <label
                   class="inline-block pl-[0.15rem] hover:pointer-events-none"
                   for="inlineCheckbox3"
@@ -173,8 +179,8 @@ onMounted(async () => {
         </button>
       </div>
     </div>
+    </form>
   </div>
-  </form>
 </template>
 
 <style scoped lang="postcss">

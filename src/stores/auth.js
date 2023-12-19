@@ -2,6 +2,7 @@ import {ref} from 'vue'
 import {defineStore} from 'pinia'
 import router from "../router";
 import api from "../apis";
+import {COURSE_STATUS} from "../constant/course";
 
 export const useAuthStore = defineStore('authStore', () => {
         const isAuthenticate = ref(false)
@@ -117,8 +118,29 @@ export const useAuthStore = defineStore('authStore', () => {
         }
 
         async function profile() {
-            const {data} = await api.get('/api/admin/user')
-            user.value = data.data
+            const {data} = await api.get('/api/admin/profile')
+            console.log(data)
+            user.value.name = data.data.name
+            user.value.email = data.data.email
+            user.value.roles = data.data.roles
+            user.value.permissions = mapPermissionGroup(data.data.permissions)
+        }
+
+        async function updateProfile(formData){
+            const {data} = await api.post(`api/admin/profile/update`, {_method: 'PUT', email: formData.email, name: formData.name}, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+            })
+            await profile()
+        }
+
+        async function changePassword(formData){
+            const {data} = await api.post(`api/admin/profile/change-password`, {_method: 'PUT', ...formData}, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+            })
         }
 
         async function loginGoogle() {
@@ -135,7 +157,7 @@ export const useAuthStore = defineStore('authStore', () => {
             let popUp = await openPopupCenter(data.data)
         }
 
-        return {isAuthenticate, user, login, logout, forgotPassword, resetPassword, profile, loginGoogle}
+        return {isAuthenticate, user, login, logout, forgotPassword, resetPassword, profile, loginGoogle, updateProfile, changePassword}
     },
     {
         persist: {

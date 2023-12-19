@@ -27,6 +27,22 @@ const router = createRouter({
           },
         },
         {
+          path: '/category',
+          name: 'category',
+          component: () => import('../views/Category.vue'),
+          meta: {
+            breadcrumb: 'Category',
+          },
+        },
+        {
+          path: '/category/add',
+          name: 'category_add',
+          component: () => import('../views/CategoryAdd.vue'),
+          meta: {
+            breadcrumb: 'Category Add',
+          },
+        },
+        {
           path: '/course',
           name: 'course',
           component: () => import('../views/Course.vue'),
@@ -102,6 +118,14 @@ const router = createRouter({
           component: () => import('../views/AccountAdd.vue'),
           meta: {
             breadcrumb: 'Account Add',
+          },
+        },
+        {
+          path: '/account/:id',
+          name: 'account_detail',
+          component: () => import('../views/AccountDetail.vue'),
+          meta: {
+            breadcrumb: 'Account Detail',
           },
         },
         {
