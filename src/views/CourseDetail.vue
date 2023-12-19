@@ -28,7 +28,9 @@ const courseDetail = ref({
   description: null,
 })
 const listCategory = ref({})
-
+const errors = ref({
+  name: []
+})
 onMounted(async () => {
   initTE({Input, Select, Button}, {allowReinits: true});
   await categoryStore.getListCategory();
@@ -99,6 +101,9 @@ const onFileChange = ($event) => {
                 type="text"
                 v-model="courseDetail.name"
                 id="formInputName"/>
+          </div>
+          <div class="mb-6 text-sm text-red-600" v-show="errors.name.length > 0">
+            {{ errors.name.toString() }}
           </div>
         </div>
         <div class="col-span-3">
@@ -181,7 +186,7 @@ const onFileChange = ($event) => {
           Reject
         </button>
         <button
-            v-if="authStore.user.permissions.course.update && courseDetail.status !== COURSE_STATUS.INACTIVE && courseDetail.status !== COURSE_STATUS.REJECTED"
+            v-if="authStore.user.permissions.course.update && courseDetailStore.courseDetail.status !== COURSE_STATUS.INACTIVE && courseDetailStore.courseDetail.status !== COURSE_STATUS.REJECTED"
             type="button"
             class="mr-4 rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
             @click="updateCourse">

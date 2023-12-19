@@ -20,11 +20,7 @@ export const useUserStore = defineStore('userStore', () => {
         }
 
         async function addAccount(formData) {
-            const {data} = await api.post('api/admin/account/add', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
-            })
+            const {data} = await api.post('api/admin/account/add', formData)
         }
 
         return {listAccountClient, listAccountCms, getListAccountClient, getListAccountCms, addAccount}

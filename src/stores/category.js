@@ -4,6 +4,7 @@ import api from "../apis";
 
 export const useCategoryStore = defineStore('categoryStore', () => {
         const listCategory = ref([])
+        const categoryDetail = ref([])
 
         async function getListCategory() {
             const {data} = await api.get('api/admin/category/active')
@@ -16,9 +17,44 @@ export const useCategoryStore = defineStore('categoryStore', () => {
             return data.data
         }
 
-        async function addCategory
+        async function getCategoryDetail(id) {
+            const {data} = await api.get(`api/admin/category/${id}`)
+            categoryDetail.value = data.data
+        }
 
-        return {listCategory, getListCategory, getListCategoryWithPagination, addCategory}
+        async function addCategory(formData) {
+            try {
+                await api.post('api/admin/category/add', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                })
+            } catch (error) {
+                return error.response.data.errors
+            }
+        }
+
+        async function updateCategory(id, formData) {
+            try {
+                await api.post(`api/admin/category/${id}`, {_method: 'PUT', ...formData}, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                })
+            } catch (error) {
+                return error.response.data.errors
+            }
+        }
+
+        return {
+            listCategory,
+            categoryDetail,
+            getListCategory,
+            getListCategoryWithPagination,
+            addCategory,
+            getCategoryDetail,
+            updateCategory
+        }
     },
     {
         persist: {

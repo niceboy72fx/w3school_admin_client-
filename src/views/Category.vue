@@ -43,14 +43,12 @@ onMounted(async () => {
   initTE({Datatable, Input, Select, Button}, {allowReinits: true});
   const datatable = document.getElementById('datatable');
   const response = await categoryStore.getListCategoryWithPagination()
-  console.log(response)
   Object.assign(pagination.value, {
     currentPage: response.current_page,
     perPage: response.per_page,
     total: response.total
   })
   Object.assign(formData.value, {page: response.current_page, perPage: response.per_page})
-  console.log(categoryStore.listCategory)
   data.value.rows = categoryStore.listCategory.map((category, index) => {
     category.stt = ((pagination.value.currentPage - 1) * pagination.value.perPage) + index + 1
     category.status = mapCategoryStatus(category.status)

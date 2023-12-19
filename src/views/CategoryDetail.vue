@@ -3,35 +3,37 @@ import {useAuthStore} from "../stores/auth";
 import {
   initTE, Input, Validation, Select, Button
 } from "tw-elements";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, computed} from "vue";
 import {useRoute} from "vue-router";
 import DateRangePicker from 'vue3-daterange-picker'
-import {COURSE_LEVEL} from '../constant/course';
+import {COURSE_LEVEL, COURSE_STATUS, COURSE_STATUS_APPROVED} from '../constant/course';
 import {useCategoryStore} from "../stores/category";
-import {useCourseStore} from "../stores/course";
 import router from "../router";
+import {CATEGORY_STATUS} from "../constant/category";
 
+const isEdit = true
 const route = useRoute()
 const categoryStore = useCategoryStore()
-const formData = ref({
+const authStore = useAuthStore()
+const categoryDetail = ref({
   name: null,
+  status: null,
 })
 const errors = ref({
   name: []
 })
-
 onMounted(async () => {
   initTE({Input, Select, Button}, {allowReinits: true});
+  await categoryStore.getCategoryDetail(route.params.id);
+  Object.assign(categoryDetail.value, categoryStore.categoryDetail)
 })
-
-const addCategory = async () => {
-  const data = await categoryStore.addCategory(formData.value);
+const updateCategory = async () => {
+  const data = await categoryStore.updateCategory(route.params.id, categoryDetail.value);
   Object.assign(errors.value, data)
   if(!data){
     await router.push({name: 'category'})
   }
 }
-
 </script>
 
 <template>
@@ -48,30 +50,35 @@ const addCategory = async () => {
             <input
                 class="peer block min-h-[auto] w-full rounded border-0 px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:peer-focus:text-primary [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
                 type="text"
-                v-model="formData.name"
+                v-model="categoryDetail.name"
                 id="formInputName"/>
           </div>
+        </div>
+        <div class="col-span-3">
+          <label class="text-gray-400">Status</label>
+          <select data-te-select-init v-model="categoryDetail.status">
+            <option :value="value" v-for="(value,name) in CATEGORY_STATUS">{{ ucFirst(name) }}</option>
+          </select>
         </div>
       </div>
       <div class="mb-6 text-sm text-red-600" v-show="errors.name.length > 0">
         {{ errors.name.toString() }}
       </div>
-
     </section>
     <hr class="mb-5 dark:border-gray-600">
     <section>
-      <div class="flex justify-end">
+      <div class="flex justify-end mb-2">
         <button
             type="button"
             class="mr-4 rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-            @click="addCategory()">
-          Add
+            @click="updateCategory">
+          Update
         </button>
         <button
-            @click="router.go(-1)"
+            @click="router.push({name: 'category'})"
             type="button"
-            class="rounded bg-danger px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#dc4c64] transition duration-150 ease-in-out hover:bg-danger-600 hover:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.3),0_4px_18px_0_rgba(220,76,100,0.2)] focus:bg-danger-600 focus:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.3),0_4px_18px_0_rgba(220,76,100,0.2)] focus:outline-none focus:ring-0 active:bg-danger-700 active:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.3),0_4px_18px_0_rgba(220,76,100,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(220,76,100,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.2),0_4px_18px_0_rgba(220,76,100,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.2),0_4px_18px_0_rgba(220,76,100,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(220,76,100,0.2),0_4px_18px_0_rgba(220,76,100,0.1)]">
-          Cancel
+            class="rounded bg-primary-100 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-primary-700 transition duration-150 ease-in-out hover:bg-primary-accent-100 focus:bg-primary-accent-100 focus:outline-none focus:ring-0 active:bg-primary-accent-200">
+          Back
         </button>
       </div>
     </section>
@@ -79,5 +86,13 @@ const addCategory = async () => {
 </template>
 
 <style scoped>
-
+.bg-disable {
+  background-color: #E9ECEF;
+}
+.btn-upload {
+  &:hover{
+    background: linear-gradient(to bottom,  rgb(255,255,255, 0.5) 0%, rgb(195,195,195, 0.2) 100%);
+    opacity: 1;
+  }
+}
 </style>

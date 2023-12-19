@@ -43,6 +43,14 @@ const router = createRouter({
           },
         },
         {
+          path: '/category/:id',
+          name: 'category_detail',
+          component: () => import('../views/CategoryDetail.vue'),
+          meta: {
+            breadcrumb: 'Category Detail',
+          },
+        },
+        {
           path: '/course',
           name: 'course',
           component: () => import('../views/Course.vue'),
