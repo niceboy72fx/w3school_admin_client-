@@ -207,7 +207,6 @@ function reset() {
   <div
       id="datatable"
       data-te-fixed-header="true"
-      data-te-max-height="430"
       data-te-striped="true"
       data-te-pagination="false">
   </div>

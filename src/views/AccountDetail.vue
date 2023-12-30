@@ -7,6 +7,7 @@ import router from "../router";
 import {useUserStore} from "../stores/user";
 import {useAccountDetailStore} from "../stores/accountDetail";
 import {useRoute} from "vue-router";
+import {USER_STATUS} from "../constant/user";
 
 const route = useRoute()
 const userStore = useUserStore();
@@ -15,6 +16,7 @@ const accountDetail = ref({
   name: null,
   email: null,
   roles: [2],
+  status: null,
   permissions: {
     course: {
       view: true,
@@ -45,7 +47,7 @@ onMounted(async () => {
     submitCallback: async (e, valid) => {
       if (valid) {
         try {
-          await userStore.addAccount(accountDetail.value);
+          await userStore.updateAccount(route.params.id, accountDetail.value);
           await router.push({name: 'account_cms'})
         } catch (error) {
           let el = document.querySelector('#formEmailInputGroup span')
@@ -101,7 +103,15 @@ onMounted(async () => {
               id="formInputEmail"/>
         </div>
       </div>
-      <div class="col-span-3 flex items-end">
+      <div class="col-span-3 flex">
+        Status
+      </div>
+      <div class="col-span-3">
+        <select data-te-select-init v-model="accountDetail.status">
+          <option :value="value" v-for="(value,name) in USER_STATUS">{{ ucFirst(name) }}</option>
+        </select>
+      </div>
+      <div class="col-span-3 col-start-1 flex items-end">
         Roles
       </div>
       <div class="col-span-3">
@@ -136,11 +146,11 @@ onMounted(async () => {
                     class="checkbox "
                     type="checkbox"
                     :checked="value"
-                    id="inlineCheckbox3"
+                    :id="permission + 'checkbox'"
                 />
                 <label
                     class="inline-block pl-[0.15rem] hover:pointer-events-none"
-                    for="inlineCheckbox3"
+                    :for="permission + 'checkbox'"
                 >{{ ucFirst(permission) }}</label>
               </div>
             </div>
@@ -152,11 +162,11 @@ onMounted(async () => {
                   class="checkbox "
                   type="checkbox"
                   :checked="value"
-                  id="inlineCheckbox3"
+                  :id="permission + 'checkbox'"
               />
               <label
                   class="inline-block pl-[0.15rem] hover:pointer-events-none"
-                  for="inlineCheckbox3"
+                  :for="permission + 'checkbox'"
               >{{ ucFirst(permission) }}</label>
             </div>
           </div>

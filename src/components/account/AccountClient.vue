@@ -8,6 +8,8 @@ import Pagination from "../common/Pagination.vue";
 import {onMounted, ref} from "vue";
 import {Button, Datatable, initTE, Input, Select} from "tw-elements";
 import helper from "../../plugins/helper";
+import {COURSE_STATUS} from "../../constant/course";
+import router from "../../router";
 
 const userStore = useUserStore();
 const formData = ref({
@@ -40,7 +42,9 @@ const data = ref({
   ],
   rows: [],
 });
-
+const showModalLock = ref(false)
+const showModalUnLock = ref(false)
+const userID = ref(0)
 
 onMounted(async () => {
   initTE({Datatable, Input, Select, Button}, {allowReinits: true});
@@ -61,8 +65,9 @@ onMounted(async () => {
   const setActions = () => {
     document.querySelectorAll(".lock-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
-        console.log(btn.attributes["data-te-row-id"].value)
-        // router.push({name: 'course_detail', params: {type: 'approved', id: btn.attributes["data-te-row-id"].value}})
+        userID.value = btn.attributes["data-te-row-id"].value
+        let userInfo = userStore.listAccountClient.find(user => user.id == userID.value)
+        userInfo.status === 'Active' ? showModalLock.value = true : showModalUnLock.value = true
       });
     });
   };
@@ -71,11 +76,23 @@ onMounted(async () => {
   const myDatatable = new Datatable(datatable, formatData(data.value));
   // const hideAlert = setTimeout(() => {courseDetailStore.statusUpdate = false}, 4000);
 })
-
+const lockAccount = async () => {
+  await userStore.lockAccount(userID.value);
+  showModalLock.value = false
+  await getListAccountClient()
+}
+const unLockAccount = async () => {
+  await userStore.unLockAccount(userID.value);
+  showModalUnLock.value = false
+  await getListAccountClient()
+}
 async function getListAccountClient() {
-  console.log(formData.value)
   const response = await userStore.getListAccountClient(helper.toQueryString(formData.value))
-  Object.assign(pagination.value, {currentPage: response.current_page, perPage:response.per_page, total: response.total})
+  Object.assign(pagination.value, {
+    currentPage: response.current_page,
+    perPage: response.per_page,
+    total: response.total
+  })
   data.value.rows = userStore.listAccountClient.map((user, index) => {
     user.stt = ((pagination.value.currentPage - 1) * pagination.value.perPage) + index + 1
     user.status = mapUserStatus(user.status)
@@ -111,25 +128,25 @@ function formatData(data) {
       return {
         ...row,
         action:
-            // `
-            // <a
-            //   type="button"
-            //   data-te-ripple-init
-            //   data-te-ripple-color="light"
-            //   href="/account/${row.id}"
-            //   class="edit-btn cursor-pointer inline-block rounded-full border border-primary bg-primary text-white p-1.5 uppercase leading-normal shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
-            //  <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.3" stroke="#3B71CA" class="w-4 h-4">
-            //     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-            //     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-            //   </svg>
-            // </a>`
+        // `
+        // <a
+        //   type="button"
+        //   data-te-ripple-init
+        //   data-te-ripple-color="light"
+        //   href="/account/${row.id}"
+        //   class="edit-btn cursor-pointer inline-block rounded-full border border-primary bg-primary text-white p-1.5 uppercase leading-normal shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
+        //  <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.3" stroke="#3B71CA" class="w-4 h-4">
+        //     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+        //     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+        //   </svg>
+        // </a>`
             `
             <a
               type="button"
               data-te-ripple-init
               data-te-ripple-color="light"
               data-te-row-id="${row.id}"
-              class="lock-btn cursor-pointer inline-block rounded-full border border-red-500 bg-red-500 text-white p-1.5 uppercase leading-normal shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
+              class="lock-btn cursor-pointer inline-block rounded-full border border-primary bg-primary text-white p-1.5 uppercase leading-normal shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="SVGRepo_bgCarrier" stroke-width="10"></g><g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g><g id="SVGRepo_iconCarrier"> <path d="M12 14.5V16.5M7 10.0288C7.47142 10 8.05259 10 8.8 10H15.2C15.9474 10 16.5286 10 17 10.0288M7 10.0288C6.41168 10.0647 5.99429 10.1455 5.63803 10.327C5.07354 10.6146 4.6146 11.0735 4.32698 11.638C4 12.2798 4 13.1198 4 14.8V16.2C4 17.8802 4 18.7202 4.32698 19.362C4.6146 19.9265 5.07354 20.3854 5.63803 20.673C6.27976 21 7.11984 21 8.8 21H15.2C16.8802 21 17.7202 21 18.362 20.673C18.9265 20.3854 19.3854 19.9265 19.673 19.362C20 18.7202 20 17.8802 20 16.2V14.8C20 13.1198 20 12.2798 19.673 11.638C19.3854 11.0735 18.9265 10.6146 18.362 10.327C18.0057 10.1455 17.5883 10.0647 17 10.0288M7 10.0288V8C7 5.23858 9.23858 3 12 3C14.7614 3 17 5.23858 17 8V10.0288" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path> </g></svg>
             </a>
 `,
@@ -151,9 +168,9 @@ function reset() {
 <template>
   <div class="grid grid-cols-12 gap-x-6 gap-y-2 mb-6">
     <label class="text-gray-400 col-span-4">Search</label>
-    <label class="text-gray-400 col-span-3">Roles</label>
+<!--    <label class="text-gray-400 col-span-3">Roles</label>-->
     <!--    <label class="text-gray-400 col-span-3">Created at</label>-->
-    <label class="text-gray-400 col-span-3">Status</label>
+    <label class="text-gray-400 col-span-6">Status</label>
     <div class="relative col-span-4" data-te-input-wrapper-init>
       <input
           type="text"
@@ -162,12 +179,12 @@ function reset() {
           id="exampleFormControlInput1"
           placeholder="Type something to search..."/>
     </div>
-    <div class="col-span-3">
-      <select data-te-select-init multiple data-te-select-placeholder="Choose some roles" v-model="formData.roles">
-        <option value="1">Admin</option>
-        <option value="2">Editor</option>
-      </select>
-    </div>
+<!--    <div class="col-span-3">-->
+<!--      <select data-te-select-init multiple data-te-select-placeholder="Choose some roles" v-model="formData.roles">-->
+<!--        <option value="1">Admin</option>-->
+<!--        <option value="2">Editor</option>-->
+<!--      </select>-->
+<!--    </div>-->
     <!--    <div class="col-span-3">-->
     <!--      <DateRangePicker :date-range="formData.range" :auto-apply="true" @update:model-value="updateDateRange"/>-->
     <!--    </div>-->
@@ -195,18 +212,92 @@ function reset() {
   <div
       id="datatable"
       data-te-fixed-header="true"
-      data-te-max-height="430"
       data-te-striped="true"
       data-te-pagination="false">
   </div>
   <Pagination :currentPage="pagination.currentPage" :total="pagination.total" :perPage="pagination.perPage"
               @change="(page) => {formData.page = page; getListAccountClient();}"
               @changePerPage="(perPage) => {formData.perPage = perPage; getListAccountClient()}"/>
-
+  <div v-if="showModalLock" class="modal">
+    <div class="modal-content">
+      <span @click="showModalLock = false" class="close mt-[-10px]">&times;</span>
+      <div class="text-primary font-bold border-b-2 mb-3 pb-2">Confirm lock account user</div>
+      <p class="mb-10">After lock account of user, user can't login to system.<br>Do you want to continue?</p>
+      <div class="flex justify-end">
+        <button
+            type="button"
+            class="mr-4 rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+            @click="lockAccount">
+          Confirm
+        </button>
+        <button
+            @click="showModalLock = false"
+            type="button"
+            class="rounded bg-primary-100 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-primary-700 transition duration-150 ease-in-out hover:bg-primary-accent-100 focus:bg-primary-accent-100 focus:outline-none focus:ring-0 active:bg-primary-accent-200">
+          Back
+        </button>
+      </div>
+    </div>
+  </div>
+  <div v-if="showModalUnLock" class="modal">
+    <div class="modal-content">
+      <span @click="showModalUnLock = false" class="close mt-[-10px]">&times;</span>
+      <div class="text-primary font-bold border-b-2 mb-3 pb-2">Confirm unlock account user</div>
+      <p class="mb-10">After unlock account of user, user can login to system.<br>Do you want to continue?</p>
+      <div class="flex justify-end">
+        <button
+            type="button"
+            class="mr-4 rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
+            @click="unLockAccount">
+          Confirm
+        </button>
+        <button
+            @click="showModalUnLock = false"
+            type="button"
+            class="rounded bg-primary-100 px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-primary-700 transition duration-150 ease-in-out hover:bg-primary-accent-100 focus:bg-primary-accent-100 focus:outline-none focus:ring-0 active:bg-primary-accent-200">
+          Back
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .vue-daterange-picker {
   display: block;
 }
+
+.modal {
+  position: fixed;
+  z-index: 10000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+
+  .modal-content {
+    background-color: white;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #cbccce;
+    border-radius: 5px;
+    width: 25%;
+  }
+
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+
+    *:hover {
+      color: black;
+      text-decoration: none;
+    }
+  }
+}
+
+
 </style>

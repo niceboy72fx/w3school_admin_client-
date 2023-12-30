@@ -2,6 +2,7 @@ import {ref, computed} from 'vue'
 import {defineStore} from 'pinia'
 import account from "../../api/account";
 import api from "../apis";
+import {USER_STATUS} from "../constant/user";
 
 export const useUserStore = defineStore('userStore', () => {
         const listAccountClient = ref([])
@@ -23,6 +24,22 @@ export const useUserStore = defineStore('userStore', () => {
             const {data} = await api.post('api/admin/account/add', formData)
         }
 
-        return {listAccountClient, listAccountCms, getListAccountClient, getListAccountCms, addAccount}
+        async function updateAccount(id, formData) {
+            const {data} = await api.post(`api/admin/account/${id}`, {_method: 'PUT', ...formData}, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+            })
+            // statusUpdate.value = data.data
+        }
+
+        return {
+            listAccountClient,
+            listAccountCms,
+            getListAccountClient,
+            getListAccountCms,
+            addAccount,
+            updateAccount,
+        }
     }
 );
