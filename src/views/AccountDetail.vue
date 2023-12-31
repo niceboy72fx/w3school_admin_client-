@@ -19,50 +19,42 @@ const accountDetail = ref({
   status: null,
   permissions: {
     course: {
-      view: true,
-      update: true,
-      create: true,
-      approve: false
+      view: 1,
+      update: 1,
+      create: 1,
+      approve: 0
     },
     account: {
       cms: {
-        view: false,
-        update: false,
-        create: false
+        view: 0,
+        update: 0,
+        create: 0
       },
       client: {
-        view: false,
-        closure: false
+        view: 0,
+        closure: 0
       }
     }
   },
 })
+const errors = ref({
+  name: [],
+  email: [],
+  status: [],
+  roles: [],
+})
 onMounted(async () => {
-  initTE({Validation, Input, Select, Button}, {allowReinits: true});
-
+  initTE({Input, Select, Button}, {allowReinits: true});
   await accountDetailStore.getAccountDetail(route.params.id);
   Object.assign(accountDetail.value, accountDetailStore.accountDetail)
-  const fullValidationForm = document.getElementById("formAccountAdd");
-  const fullValidation = new Validation(fullValidationForm, {
-    submitCallback: async (e, valid) => {
-      if (valid) {
-        try {
-          await userStore.updateAccount(route.params.id, accountDetail.value);
-          await router.push({name: 'account_cms'})
-        } catch (error) {
-          let el = document.querySelector('#formEmailInputGroup span')
-          el.innerHTML = error.response.data.message
-          el.classList.add('text-[#dc4c64]')
-          document.querySelectorAll('#formEmailInputGroup div div')[0].classList.add('border-[#dc4c64]', 'group-data-[te-input-focused]:shadow-[-1px_0_0_#dc4c64,_0_1px_0_0_#dc4c64,_0_-1px_0_0_#dc4c64]', 'group-data-[te-input-focused]:border-[#dc4c64]')
-          document.querySelectorAll('#formEmailInputGroup div div')[1].classList.add('border-[#dc4c64]', 'group-data-[te-input-focused]:shadow-[0_1px_0_0_#dc4c64]', 'group-data-[te-input-focused]:border-[#dc4c64]')
-          document.querySelectorAll('#formEmailInputGroup div div')[2].classList.add('border-[#dc4c64]', 'group-data-[te-input-focused]:shadow-[1px_0_0_#dc4c64,_0_-1px_0_0_#dc4c64,_0_1px_0_0_#dc4c64]', 'group-data-[te-input-focused]:border-[#dc4c64]')
-        }
-      } else {
-      }
-    },
-  });
 })
-
+const updateAccount = async () => {
+  const data = await userStore.updateAccount(route.params.id, accountDetail.value);
+  Object.assign(errors.value, data)
+  if(!data){
+    await router.push({name: 'account_cms'})
+  }
+}
 </script>
 
 <template>
@@ -73,16 +65,16 @@ onMounted(async () => {
         Name
       </div>
       <div class="col-span-7">
-        <div class="relative" data-te-input-wrapper-init
-             data-te-validate="input"
-             data-te-validation-ruleset="isRequired"
-        >
+        <div class="relative" data-te-input-wrapper-init>
           <input
               type="text"
               v-model="accountDetail.name"
               placeholder="Name"
               class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:peer-focus:text-primary [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
               id="formInputName"/>
+        </div>
+        <div class="mt-2 mb-2 text-sm text-red-600" v-show="errors.name.length > 0">
+          {{ errors.name.toString() }}
         </div>
       </div>
       <div class="col-span-3 flex">
@@ -102,6 +94,9 @@ onMounted(async () => {
               class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:peer-focus:text-primary [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
               id="formInputEmail"/>
         </div>
+        <div class="mt-2 mb-2 text-sm text-red-600" v-show="errors.email.length > 0">
+          {{ errors.email.toString() }}
+        </div>
       </div>
       <div class="col-span-3 flex">
         Status
@@ -110,8 +105,11 @@ onMounted(async () => {
         <select data-te-select-init v-model="accountDetail.status">
           <option :value="value" v-for="(value,name) in USER_STATUS">{{ ucFirst(name) }}</option>
         </select>
+        <div class="mt-2 mb-2 text-sm text-red-600" v-show="errors.status.length > 0">
+          {{ errors.status.toString() }}
+        </div>
       </div>
-      <div class="col-span-3 col-start-1 flex items-end">
+      <div class="col-span-3 col-start-1">
         Roles
       </div>
       <div class="col-span-3">
@@ -121,6 +119,9 @@ onMounted(async () => {
             for="roleAdminCheckbox">
           Admin
         </label>
+        <div class="mt-2 mb-2 text-sm text-red-600" v-show="errors.roles.length > 0">
+          {{ errors.roles.toString() }}
+        </div>
       </div>
       <div class="col-span-6">
         <input class="checkbox cursor-pointer" type="checkbox" :value="ROLE.EDITOR" id="roleEditorCheckbox" v-model="accountDetail.roles"/>
@@ -177,7 +178,7 @@ onMounted(async () => {
         <button
             type="button"
             class="mr-4 rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-            data-te-submit-btn-ref
+            @click="updateAccount"
         >
           Update
         </button>

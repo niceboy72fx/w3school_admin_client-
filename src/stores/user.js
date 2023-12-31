@@ -25,11 +25,16 @@ export const useUserStore = defineStore('userStore', () => {
         }
 
         async function updateAccount(id, formData) {
-            const {data} = await api.post(`api/admin/account/${id}`, {_method: 'PUT', ...formData}, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                },
-            })
+            try {
+                formData["_method"] = "PUT"
+                await api.post(`api/admin/account/${id}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                })
+            } catch (error) {
+                return error.response.data.errors
+            }
             // statusUpdate.value = data.data
         }
 

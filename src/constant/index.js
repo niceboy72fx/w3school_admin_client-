@@ -3,6 +3,7 @@ import {USER_STATUS} from "./user";
 import {ROLE} from "./role";
 import {PERMISSION} from "./permission";
 import {CATEGORY_STATUS} from "./category";
+import {TOPIC_STATUS} from "./topic";
 function ucFirst(string) {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
@@ -27,4 +28,8 @@ export function mapUserPermissions(value){
 
 export function mapCategoryStatus(value){
     return ucFirst(Object.keys(CATEGORY_STATUS).find(key => CATEGORY_STATUS[key] === value));
+}
+
+export function mapTopicStatus(value){
+    return ucFirst(Object.keys(TOPIC_STATUS).find(key => TOPIC_STATUS[key] === value));
 }

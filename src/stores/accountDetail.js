@@ -10,67 +10,68 @@ export const useAccountDetailStore = defineStore('accountDetailStore', () => {
             email: null,
             roles: [],
             permissions: {},
+            status: null,
         })
         const statusUpdate = ref(false)
 
         function mapPermissionGroup(data) {
             const result = {
                 login: {
-                    cms: false,
-                    client: false,
+                    cms: 0,
+                    client: 0,
                 },
                 course: {
-                    view: false,
-                    update: false,
-                    create: false,
-                    approve: false,
+                    view: 0,
+                    update: 0,
+                    create: 0,
+                    approve: 0,
                 },
                 account: {
                     cms: {
-                        view: false,
-                        update: false,
-                        create: false,
+                        view: 0,
+                        update: 0,
+                        create: 0,
                     },
                     client: {
-                        view: false,
-                        closure: false,
+                        view: 0,
+                        closure: 0,
                     }
                 },
             }
             data.forEach(function (permission) {
                 switch (permission.toUpperCase()) {
                     case "LOGIN_CMS":
-                        result.login.cms = true;
+                        result.login.cms = 1;
                         break;
                     case "LOGIN_CLIENT":
-                        result.login.client = true;
+                        result.login.client = 1;
                         break;
                     case "COURSE_VIEW":
-                        result.course.view = true;
+                        result.course.view = 1;
                         break;
                     case "COURSE_CREATE":
-                        result.course.create = true;
+                        result.course.create = 1;
                         break;
                     case "COURSE_UPDATE":
-                        result.course.update = true;
+                        result.course.update = 1;
                         break;
                     case "COURSE_APPROVE":
-                        result.course.approve = true;
+                        result.course.approve = 1;
                         break;
                     case "ACCOUNT_CMS_VIEW":
-                        result.account.cms.view = true;
+                        result.account.cms.view = 1;
                         break;
                     case "ACCOUNT_CMS_UPDATE":
-                        result.account.cms.create = true;
+                        result.account.cms.create = 1;
                         break;
                     case "ACCOUNT_CMS_CREATE":
-                        result.account.cms.update = true;
+                        result.account.cms.update = 1;
                         break;
                     case "ACCOUNT_CLIENT_VIEW":
-                        result.account.client.view = true;
+                        result.account.client.view = 1;
                         break;
                     case "ACCOUNT_CLIENT_CLOSURE":
-                        result.account.client.closure = true;
+                        result.account.client.closure = 1;
                         break;
                 }
             })
@@ -82,6 +83,7 @@ export const useAccountDetailStore = defineStore('accountDetailStore', () => {
             accountDetail.value.name = data.name
             accountDetail.value.email = data.email
             accountDetail.value.roles = data.roles
+            accountDetail.value.status = data.status
             accountDetail.value.permissions = mapPermissionGroup(data.permissions)
             // isEdit.value = accountDetail.value.status !== COURSE_STATUS.INACTIVE && accountDetail.value.status !== COURSE_STATUS.REJECTED
         }
@@ -92,7 +94,7 @@ export const useAccountDetailStore = defineStore('accountDetailStore', () => {
                     'Content-Type': 'multipart/form-data'
                 },
             })
-            statusUpdate.value = data.data
+            // statusUpdate.value = data.data
         }
 
         async function approveAccount(id) {

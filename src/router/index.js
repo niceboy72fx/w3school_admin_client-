@@ -139,12 +139,10 @@ const router = createRouter({
         {
           path: '/topic',
           name: 'topic',
-          component: () => import('../views/Topic-view.vue'),
+          component: () => import('../views/Topic.vue'),
           meta: {
             breadcrumb: 'Topic',
           },
-          children: [
-          ]
         },
         {
           path: '/topic/:id',
