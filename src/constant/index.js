@@ -4,6 +4,7 @@ import {ROLE} from "./role";
 import {PERMISSION} from "./permission";
 import {CATEGORY_STATUS} from "./category";
 import {TOPIC_STATUS} from "./topic";
+import {LESSON_STATUS} from "./lesson";
 function ucFirst(string) {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
@@ -32,4 +33,8 @@ export function mapCategoryStatus(value){
 
 export function mapTopicStatus(value){
     return ucFirst(Object.keys(TOPIC_STATUS).find(key => TOPIC_STATUS[key] === value));
+}
+
+export function mapLessonStatus(value){
+    return ucFirst(Object.keys(LESSON_STATUS).find(key => LESSON_STATUS[key] === value));
 }

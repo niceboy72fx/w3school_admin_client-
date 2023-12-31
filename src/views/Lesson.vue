@@ -8,13 +8,15 @@ import {Button, Datatable, initTE, Input, Select} from "tw-elements";
 import helper from "../plugins/helper";
 import {useCourseStore} from "../stores/course";
 import {useTopicStore} from "../stores/topic";
+import {useLessonStore} from "../stores/lesson";
 import {topic} from "../constant/navigation";
-import {TOPIC_STATUS} from "../constant/topic";
 
-const topicStore = useTopicStore()
 const courseStore = useCourseStore()
+const topicStore = useTopicStore()
+const lessonStore = useLessonStore()
 const formData = ref({
   course_id: null,
+  topic_id: null,
   keyword: '',
   status: '',
   page: 1,
@@ -47,6 +49,7 @@ onMounted(async () => {
   initTE({Datatable, Input, Select, Button}, {allowReinits: true});
   const datatable = document.getElementById('datatable');
   await courseStore.getListCourse()
+
   // const response = await topicStore.getListTopicWithPagination()
   // Object.assign(pagination.value, {
   //   currentPage: response.current_page,
@@ -72,7 +75,9 @@ onMounted(async () => {
   const myDatatable = new Datatable(datatable, formatData(data.value));
   // const hideAlert = setTimeout(() => {courseDetailStore.statusUpdate = false}, 4000);
 })
-
+const handleCourseID = async () => {
+  await topicStore.getListTopic(formData.value.course_id)
+}
 async function getListTopicWithPagination() {
   const response = await topicStore.getListTopicWithPagination(helper.toQueryString(formData.value))
   Object.assign(pagination.value, {currentPage: response.current_page, perPage:response.per_page, total: response.total})
@@ -151,13 +156,19 @@ function reset() {
 <template>
   <div class="grid grid-cols-12 gap-x-6 gap-y-2 mb-6">
     <label class="text-gray-400 col-span-3">Course</label>
+    <label class="text-gray-400 col-span-3">Topic</label>
     <label class="text-gray-400 col-span-3">Search</label>
     <label class="text-gray-400 col-span-3">Created at</label>
-    <label class="text-gray-400 col-span-3">Status</label>
     <div class="col-span-3">
-      <select data-te-select-init data-te-select-filter="true" v-model="formData.course_id">
+      <select data-te-select-init data-te-select-filter="true" v-model="formData.course_id" @change="handleCourseID">
         <option :value="null">Choose a course</option>
         <option v-for="course in courseStore.listAll" :value="course.id">{{ course.name }}</option>
+      </select>
+    </div>
+    <div class="col-span-3">
+      <select data-te-select-init data-te-select-filter="true" v-model="formData.topic_id" :disabled="!formData.course_id">
+        <option :value="null">Choose a topic</option>
+        <option v-for="topic in topicStore.listTopic" :value="topic.id">{{ topic.name }}</option>
       </select>
     </div>
     <div class="relative col-span-3" data-te-input-wrapper-init>
@@ -171,10 +182,11 @@ function reset() {
     <div class="col-span-3">
       <DateRangePicker :date-range="formData.range" :auto-apply="true" @update:model-value="updateDateRange"/>
     </div>
-    <div class="col-span-3">
+    <label class="text-gray-400 col-span-3">Status</label>
+    <div class="col-span-3 col-start-1">
       <select data-te-select-init v-model="formData.status">
         <option :value="null" selected>Choose a status</option>
-        <option :value="value" v-for="(value,name) in TOPIC_STATUS">{{ ucFirst(name) }}</option>
+        <option :value="value" v-for="(value,name) in LESSON_STATUS">{{ ucFirst(name) }}</option>
       </select>
     </div>
     <div class="col-span-2">

@@ -7,19 +7,38 @@ export const useTopicStore = defineStore('topicStore', () => {
         const topicDetail = ref([])
 
         async function getListTopic(id) {
-            const {data} = await api.get(`api/course/${id}/list-topic/`)
+            const {data} = await api.get(`api/course/${id}/list-topic`)
             listTopic.value = data.data
             return data.data
         }
 
-        async function updateTopic(id) {
-            const {data} = await api.put(`api/admin/topic/${id}/original`)
+        async function updateTopic(id, formData) {
+            try {
+                await api.post(`api/admin/topic/${id}`, {_method: 'PUT', ...formData}, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                })
+            } catch (error) {
+                return error.response.data.errors
+            }
+        }
+
+        async function getTopicDetail(id) {
+            const {data} = await api.get(`api/admin/topic/${id}`)
             topicDetail.value = data.data
         }
 
         async function addTopic(formData) {
-            const {data} = await api.post(`api/admin/topic/add`, formData)
-            return data.data
+            try {
+                await api.post('api/admin/topic/add', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                })
+            } catch (error) {
+                return error.response.data.errors
+            }
         }
 
         async function getListTopicWithPagination(query = 'page=1&perPage=10') {
@@ -28,7 +47,7 @@ export const useTopicStore = defineStore('topicStore', () => {
             return data.data
         }
 
-        return {listTopic, getListTopicWithPagination, getListTopic, updateTopic, addTopic}
+        return {listTopic, topicDetail, getListTopicWithPagination, getListTopic, getTopicDetail, updateTopic, addTopic}
     },
 
 

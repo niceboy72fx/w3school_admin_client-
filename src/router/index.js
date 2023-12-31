@@ -147,52 +147,45 @@ const router = createRouter({
         {
           path: '/topic/:id',
           name: 'topic_detail',
-          component: () => import('../components/topic/TopicUpdate.vue'),
+          component: () => import('../views/TopicDetail.vue'),
           props: { isEdit: false},
           meta: {
             breadcrumb: 'Topic Detail',
           },
         },
         {
-          path: 'topic/add',
+          path: '/topic/add',
           name: 'topic_add',
-          component: () => import('../components/topic/TopicAdd.vue'),
+          component: () => import('../views/TopicAdd.vue'),
           meta: {
-            breadcrumb: 'Topic',
+            breadcrumb: 'Topic Add',
           },
         },
         {
           path: '/lesson',
           name: 'lesson',
-          component: () => import('../views/Lesson-view.vue'),
+          component: () => import('../views/Lesson.vue'),
           meta: {
             breadcrumb: 'Lesson',
+          },
+        },
+        {
+          path: '/lesson/:id',
+          name: 'lesson_detail',
+          component: () => import('../views/LessonDetail.vue'),
+          props: { isEdit: false},
+          meta: {
+            breadcrumb: 'Lesson Detail',
           },
         },
         {
           path: '/lesson/add',
           name: 'lesson_add',
-          component: () => import('../components/lesson/Lesson-Add.vue'),
+          component: () => import('../views/LessonAdd.vue'),
           meta: {
-            breadcrumb: 'Lesson',
+            breadcrumb: 'Lesson Add',
           },
         },
-        {
-          path: '/lesson/update',
-          name: 'lesson_update',
-          component: () => import('../components/lesson/Lesson-Update.vue'),
-          meta: {
-            breadcrumb: 'Lesson',
-          },
-        },
-        {
-          path: '/lesson/addDetails',
-          name: 'lesson_add_details',
-          component: () => import('../components/lesson/LessonDetail-Add.vue'),
-          meta: {
-            breadcrumb: 'Lesson',
-          },
-        },  
       ]
     },
     {
