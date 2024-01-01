@@ -10,7 +10,6 @@ import {useCourseStore} from "../stores/course";
 import router from "../router";
 import {useLessonStore} from "../stores/lesson";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
-import helper from "../plugins/helper";
 
 const route = useRoute()
 const courseStore = useCourseStore()
@@ -35,7 +34,7 @@ onMounted(async () => {
 })
 
 const handleChangeCourseID = async () => {
-  await topicStore.getListTopic(helper.toQueryString({course_id: formData.value.course_id}))
+  await topicStore.getListTopic(formData.value.course_id)
 }
 const addLesson = async () => {
   const data = await lessonStore.addLesson(formData.value);

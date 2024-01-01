@@ -20,6 +20,7 @@ const route = useRoute()
 const formData = ref({
   course_id: route.query.course_id,
   topic_id: route.query.topic_id,
+  lesson_id: route.query.lesson_id,
   keyword: '',
   status: '',
   page: 1,
@@ -53,7 +54,7 @@ onMounted(async () => {
   const datatable = document.getElementById('datatable');
   await courseStore.getListCourse()
 
-  if (formData.value.course_id && formData.value.topic_id) {
+  if(formData.value.course_id && formData.value.topic_id){
     const response = await lessonStore.getListLessonWithPagination(helper.toQueryString(formData.value))
     Object.assign(pagination.value, {
       currentPage: response.current_page,
@@ -82,7 +83,10 @@ onMounted(async () => {
   // const hideAlert = setTimeout(() => {courseDetailStore.statusUpdate = false}, 4000);
 })
 const handleCourseID = async () => {
-  await topicStore.getListTopic(helper.toQueryString({course_id: formData.value.course_id}))
+  await topicStore.getListTopic(formData.value.course_id)
+}
+const handleTopicID = async () => {
+  await lessonStore.getListLesson(formData.value.topic_id)
 }
 
 async function getListLessonWithPagination() {
@@ -181,6 +185,14 @@ function reset() {
               :disabled="!formData.course_id" @change="handleTopicID">
         <option :value="null">Choose a topic</option>
         <option v-for="topic in topicStore.listTopic" :value="topic.id">{{ topic.name }}</option>
+      </select>
+    </div>
+    <div class="col-span-3">
+      <div class="text-gray-400">Lesson</div>
+      <select data-te-select-init data-te-select-filter="true" v-model="formData.lesson_id"
+              :disabled="!formData.topic_id">
+        <option :value="null">Choose a lesson</option>
+        <option v-for="lesson in lessonStore.listLesson" :value="lesson.id">{{ lesson.name }}</option>
       </select>
     </div>
     <div class="col-span-3 col-start-1">

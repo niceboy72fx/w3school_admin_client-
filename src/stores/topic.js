@@ -6,8 +6,8 @@ export const useTopicStore = defineStore('topicStore', () => {
         const listTopic = ref([])
         const topicDetail = ref([])
 
-        async function getListTopic(id) {
-            const {data} = await api.get(`api/course/${id}/list-topic`)
+        async function getListTopic(query = '') {
+            const {data} = await api.get(`api/admin/topic/all?` + query)
             listTopic.value = data.data
             return data.data
         }

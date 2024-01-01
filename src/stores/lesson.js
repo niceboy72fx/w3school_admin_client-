@@ -6,8 +6,8 @@ export const useLessonStore = defineStore('lessonStore', () => {
         const listLesson = ref([])
         const lessonDetail = ref([])
 
-        async function getListLesson(id) {
-            const {data} = await api.get(`api/course/${id}/list-lesson`)
+        async function getListLesson(query = '') {
+            const {data} = await api.get(`api/admin/topic/all?` + query)
             listLesson.value = data.data
             return data.data
         }

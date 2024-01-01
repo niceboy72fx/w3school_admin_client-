@@ -186,6 +186,31 @@ const router = createRouter({
             breadcrumb: 'Lesson Add',
           },
         },
+        {
+          path: '/exercise',
+          name: 'exercise',
+          component: () => import('../views/Exercise.vue'),
+          meta: {
+            breadcrumb: 'Exercise',
+          },
+        },
+        {
+          path: '/exercise/:id',
+          name: 'exercise_detail',
+          component: () => import('../views/ExerciseDetail.vue'),
+          props: { isEdit: false},
+          meta: {
+            breadcrumb: 'Exercise Detail',
+          },
+        },
+        {
+          path: '/exercise/add',
+          name: 'exercise_add',
+          component: () => import('../views/ExerciseAdd.vue'),
+          meta: {
+            breadcrumb: 'Exercise Add',
+          },
+        },
       ]
     },
     {
