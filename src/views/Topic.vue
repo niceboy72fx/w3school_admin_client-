@@ -10,15 +10,17 @@ import {useCourseStore} from "../stores/course";
 import {useTopicStore} from "../stores/topic";
 import {topic} from "../constant/navigation";
 import {TOPIC_STATUS} from "../constant/topic";
+import {useRoute} from "vue-router";
 
 const topicStore = useTopicStore()
 const courseStore = useCourseStore()
+const route = useRoute()
 const formData = ref({
-  course_id: null,
+  course_id: route.query.course_id,
   keyword: '',
   status: '',
   page: 1,
-  perPage: 1,
+  perPage: 10,
   range: {
     startDate: null,
     endDate: null
@@ -27,7 +29,7 @@ const formData = ref({
 
 const pagination = ref({
   currentPage: 1,
-  perPage: 1,
+  perPage: 10,
   total: null,
 })
 
@@ -47,18 +49,20 @@ onMounted(async () => {
   initTE({Datatable, Input, Select, Button}, {allowReinits: true});
   const datatable = document.getElementById('datatable');
   await courseStore.getListCourse()
-  // const response = await topicStore.getListTopicWithPagination()
-  // Object.assign(pagination.value, {
-  //   currentPage: response.current_page,
-  //   perPage: response.per_page,
-  //   total: response.total
-  // })
-  // Object.assign(formData.value, {page: response.current_page, perPage: response.per_page})
-  // data.value.rows = topicStore.listTopic.map((topic, index) => {
-  //   topic.stt = ((pagination.value.currentPage - 1) * pagination.value.perPage) + index + 1
-  //   topic.status = mapTopicStatus(topic.status)
-  //   return topic
-  // })
+  if(formData.value.course_id){
+    const response = await topicStore.getListTopicWithPagination(helper.toQueryString(formData.value))
+    Object.assign(pagination.value, {
+      currentPage: response.current_page,
+      perPage: response.per_page,
+      total: response.total
+    })
+    Object.assign(formData.value, {page: response.current_page, perPage: response.per_page})
+    data.value.rows = topicStore.listTopic.map((topic, index) => {
+      topic.stt = ((pagination.value.currentPage - 1) * pagination.value.perPage) + index + 1
+      topic.status = mapTopicStatus(topic.status)
+      return topic
+    })
+  }
   const setActions = () => {
     document.querySelectorAll(".lock-btn").forEach((btn) => {
       btn.addEventListener("click", () => {

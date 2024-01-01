@@ -9,6 +9,7 @@ import {useTopicStore} from "../stores/topic";
 import {useCourseStore} from "../stores/course";
 import router from "../router";
 import {useLessonStore} from "../stores/lesson";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const route = useRoute()
 const courseStore = useCourseStore()
@@ -18,13 +19,15 @@ const formData = ref({
   course_id: route.query.course_id,
   topic_id: route.query.topic_id,
   name: null,
+  content: '',
 })
 const errors = ref({
   course_id: [],
   topic_id: [],
-  name: []
+  name: [],
+  content: [],
 })
-
+const editor = ClassicEditor
 onMounted(async () => {
   initTE({Input, Select, Button}, {allowReinits: true});
   await courseStore.getListCourse()
@@ -36,7 +39,7 @@ const handleChangeCourseID = async () => {
 const addLesson = async () => {
   const data = await lessonStore.addLesson(formData.value);
   Object.assign(errors.value, data)
-  if(!data){
+  if (!data) {
     await router.push({name: 'lesson'})
   }
 }
@@ -52,7 +55,8 @@ const addLesson = async () => {
         </div>
         <div class="col-span-7">
           <div class="relative">
-            <select data-te-select-init data-te-select-filter="true" v-model="formData.course_id" @change="handleChangeCourseID">
+            <select data-te-select-init data-te-select-filter="true" v-model="formData.course_id"
+                    @change="handleChangeCourseID">
               <option :value="null">Choose a course</option>
               <option v-for="course in courseStore.listAll" :value="course.id">{{ course.name }}</option>
             </select>
@@ -66,7 +70,8 @@ const addLesson = async () => {
         </div>
         <div class="col-span-7">
           <div class="relative">
-            <select data-te-select-init data-te-select-filter="true" v-model="formData.topic_id" :disabled="!formData.course_id">
+            <select data-te-select-init data-te-select-filter="true" v-model="formData.topic_id"
+                    :disabled="!formData.course_id">
               <option :value="null">Choose a topic</option>
               <option v-for="topic in topicStore.listTopic" :value="topic.id">{{ topic.name }}</option>
             </select>
@@ -91,6 +96,18 @@ const addLesson = async () => {
         <div class="col-start-4 col-span-8 text-sm text-red-600" v-show="errors.name.length > 0">
           {{ errors.name.toString() }}
         </div>
+        <div class="col-span-3 flex">
+          Content
+        </div>
+        <div class="col-span-7">
+          <div class="relative">
+            <ckeditor :editor="editor" v-model="formData.content"></ckeditor>
+          </div>
+        </div>
+        <div class="col-start-4 col-span-8 text-sm text-red-600" v-show="errors.content.length > 0">
+          {{ errors.content.toString() }}
+        </div>
+
         <div class="col-span-12 flex justify-end">
           <button
               type="button"
@@ -111,6 +128,8 @@ const addLesson = async () => {
   </div>
 </template>
 
-<style scoped>
-
+<style lang="scss">
+.ck-editor__editable_inline {
+  min-height: 350px;
+}
 </style>

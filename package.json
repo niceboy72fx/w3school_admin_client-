@@ -18,6 +18,7 @@
     "@ckeditor/ckeditor5-link": "^40.0.0",
     "@ckeditor/ckeditor5-paragraph": "^40.0.0",
     "@ckeditor/ckeditor5-theme-lark": "^40.0.0",
+    "@ckeditor/ckeditor5-ui": "^40.2.0",
     "@ckeditor/ckeditor5-vue": "^5.1.0",
     "@popperjs/core": "^2.11.8",
     "axios": "^1.5.0",

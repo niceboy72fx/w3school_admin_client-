@@ -30,7 +30,7 @@ const addTopic = async () => {
   const data = await topicStore.addTopic(formData.value);
   Object.assign(errors.value, data)
   if(!data){
-    await router.push({name: 'topic'})
+    await router.push({name: 'topic', query: {course_id: route.query.course_id}})
   }
 }
 

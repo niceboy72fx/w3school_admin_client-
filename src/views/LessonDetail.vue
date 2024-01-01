@@ -11,6 +11,7 @@ import router from "../router";
 import {TOPIC_STATUS} from "../constant/topic";
 import {CATEGORY_STATUS} from "../constant/category";
 import {useLessonStore} from "../stores/lesson";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const route = useRoute()
 const courseStore = useCourseStore()
@@ -21,14 +22,17 @@ const lessonDetail = ref({
   topic_id: null,
   name: null,
   status: null,
+  content: '',
 })
 const errors = ref({
   course_id: [],
   topic_id: [],
   name: [],
   status: [],
+  content: [],
 })
 
+const editor = ClassicEditor
 onMounted(async () => {
   initTE({Input, Select, Button}, {allowReinits: true});
   await lessonStore.getLessonDetail(route.params.id);
@@ -37,11 +41,11 @@ onMounted(async () => {
   await topicStore.getTopicDetail(lessonDetail.value.course_id);
 })
 
-const updateTopic = async () => {
-  const data = await topicStore.updateTopic(route.params.id, lessonDetail.value);
+const updateLesson = async () => {
+  const data = await lessonStore.updateLesson(route.params.id, lessonDetail.value);
   Object.assign(errors.value, data)
   if(!data){
-    await router.push({name: 'lesson'})
+    await router.push({name: 'lesson', query: {course_id: lessonDetail.value.course_id, topic_id: lessonDetail.value.topic_id}})
   }
 }
 
@@ -56,7 +60,7 @@ const updateTopic = async () => {
         </div>
         <div class="col-span-7">
           <div class="relative">
-            <select data-te-select-init data-te-select-filter="true" v-model="lessonDetail.course_id">
+            <select data-te-select-init data-te-select-filter="true" v-model="lessonDetail.course_id" disabled>
               <option v-for="course in courseStore.listAll" :value="course.id">{{ course.name }}</option>
             </select>
           </div>
@@ -104,14 +108,25 @@ const updateTopic = async () => {
             </select>
           </div>
         </div>
-        <div class="col-start-4 col-span-8 text-sm text-red-600" v-show="errors['course_id'].length > 0">
-          {{ errors['course_id'].toString() }}
+        <div class="col-start-4 col-span-8 text-sm text-red-600" v-show="errors['status'].length > 0">
+          {{ errors['status'].toString() }}
+        </div>
+        <div class="col-span-3 flex">
+          Content
+        </div>
+        <div class="col-span-7">
+          <div class="relative">
+            <ckeditor :editor="editor" v-model="lessonDetail.content"></ckeditor>
+          </div>
+        </div>
+        <div class="col-start-4 col-span-8 text-sm text-red-600" v-show="errors.content.length > 0">
+          {{ errors.content.toString() }}
         </div>
         <div class="col-span-12 flex justify-end">
           <button
               type="button"
               class="mr-4 rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-              @click="updateTopic"
+              @click="updateLesson"
           >
             Update
           </button>
@@ -127,6 +142,8 @@ const updateTopic = async () => {
   </div>
 </template>
 
-<style scoped>
-
+<style lang="scss">
+.ck-editor__editable_inline {
+  min-height: 350px;
+}
 </style>

@@ -11,13 +11,15 @@ import {useTopicStore} from "../stores/topic";
 import {useLessonStore} from "../stores/lesson";
 import {topic} from "../constant/navigation";
 import {LESSON_STATUS} from "../constant/lesson";
+import {useRoute} from "vue-router";
 
 const courseStore = useCourseStore()
 const topicStore = useTopicStore()
 const lessonStore = useLessonStore()
+const route = useRoute()
 const formData = ref({
-  course_id: null,
-  topic_id: null,
+  course_id: route.query.course_id,
+  topic_id: route.query.topic_id,
   keyword: '',
   status: '',
   page: 1,
@@ -51,18 +53,21 @@ onMounted(async () => {
   const datatable = document.getElementById('datatable');
   await courseStore.getListCourse()
 
-  // const response = await lessonStore.getListLessonWithPagination()
-  // Object.assign(pagination.value, {
-  //   currentPage: response.current_page,
-  //   perPage: response.per_page,
-  //   total: response.total
-  // })
-  // Object.assign(formData.value, {page: response.current_page, perPage: response.per_page})
-  // data.value.rows = lessonStore.listLesson.map((topic, index) => {
-  //   topic.stt = ((pagination.value.currentPage - 1) * pagination.value.perPage) + index + 1
-  //   topic.status = mapLessonStatus(topic.status)
-  //   return topic
-  // })
+  if(formData.value.course_id && formData.value.topic_id){
+    const response = await lessonStore.getListLessonWithPagination(helper.toQueryString(formData.value))
+    Object.assign(pagination.value, {
+      currentPage: response.current_page,
+      perPage: response.per_page,
+      total: response.total
+    })
+    Object.assign(formData.value, {page: response.current_page, perPage: response.per_page})
+    data.value.rows = lessonStore.listLesson.map((lesson, index) => {
+      lesson.stt = ((pagination.value.currentPage - 1) * pagination.value.perPage) + index + 1
+      lesson.status = mapLessonStatus(lesson.status)
+      return lesson
+    })
+  }
+
   const setActions = () => {
     document.querySelectorAll(".lock-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -207,7 +212,7 @@ function reset() {
   </div>
   <div class="mt-3">
     <RouterLink
-        :to="{name: 'lesson_add', query: formData.topic_id ? { course_id: formData.course_id, topic_id: formData.topic_id } : {}}"
+        :to="{name: 'lesson_add', query: formData.course_id ? { course_id: formData.course_id, topic_id: formData.topic_id } : {}}"
         type="button"
         class="rounded px-5 mr-4 bg-primary pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
       Add
