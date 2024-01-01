@@ -1,31 +1,58 @@
 import {ref} from 'vue'
 import {defineStore} from 'pinia'
-import {lessonData, lessonDetail } from './data'
+import api from "../apis";
+
 export const useLessonStore = defineStore('lessonStore', () => {
-    const listLesson = ref([])
-    const lesson = ref([])
+        const listLesson = ref([])
+        const lessonDetail = ref([])
 
-    function getListLesson() {
-        const data = lessonData
-        listLesson.value = data
-        return data
-    }
+        async function getListLesson(id) {
+            const {data} = await api.get(`api/course/${id}/list-lesson`)
+            listLesson.value = data.data
+            return data.data
+        }
 
-    function addLesson(formData) {
-        return formData.value
-    }
+        async function updateLesson(id, formData) {
+            try {
+                await api.post(`api/admin/lesson/${id}`, {_method: 'PUT', ...formData}, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                })
+            } catch (error) {
+                return error.response.data.errors
+            }
+        }
 
-    function updateLesson(formData, id) {
-        lesson.value = listLesson[id]
-        return lesson.value
-    }
+        async function getLessonDetail(id) {
+            const {data} = await api.get(`api/admin/lesson/${id}`)
+            lessonDetail.value = data.data
+        }
 
-    return {lesson, lessonDetail, getListLesson, addLesson, updateLesson}
-},
+        async function addLesson(formData) {
+            try {
+                await api.post('api/admin/lesson/add', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                })
+            } catch (error) {
+                return error.response.data.errors
+            }
+        }
+
+        async function getListLessonWithPagination(query = 'page=1&perPage=10') {
+            const {data} = await api.get('api/admin/lesson/overall?' + query)
+            listLesson.value = data.data.data
+            return data.data
+        }
+
+        return {listLesson, lessonDetail, getListLessonWithPagination, getListLesson, getLessonDetail, updateLesson, addLesson}
+    },
 
 
-{
-    persist: {
-        enabled: true
-    }
-})
+    {
+        persist: {
+            enabled: true
+        }
+    })

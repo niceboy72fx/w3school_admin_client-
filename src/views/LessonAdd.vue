@@ -8,16 +8,20 @@ import DateRangePicker from 'vue3-daterange-picker'
 import {useTopicStore} from "../stores/topic";
 import {useCourseStore} from "../stores/course";
 import router from "../router";
+import {useLessonStore} from "../stores/lesson";
 
 const route = useRoute()
 const courseStore = useCourseStore()
 const topicStore = useTopicStore()
+const lessonStore = useLessonStore()
 const formData = ref({
   course_id: route.query.course_id,
+  topic_id: route.query.topic_id,
   name: null,
 })
 const errors = ref({
   course_id: [],
+  topic_id: [],
   name: []
 })
 
@@ -26,11 +30,14 @@ onMounted(async () => {
   await courseStore.getListCourse()
 })
 
-const addTopic = async () => {
-  const data = await topicStore.addTopic(formData.value);
+const handleChangeCourseID = async () => {
+  await topicStore.getListTopic(formData.value.course_id)
+}
+const addLesson = async () => {
+  const data = await lessonStore.addLesson(formData.value);
   Object.assign(errors.value, data)
   if(!data){
-    await router.push({name: 'topic'})
+    await router.push({name: 'lesson'})
   }
 }
 
@@ -45,7 +52,7 @@ const addTopic = async () => {
         </div>
         <div class="col-span-7">
           <div class="relative">
-            <select data-te-select-init data-te-select-filter="true" v-model="formData.course_id">
+            <select data-te-select-init data-te-select-filter="true" v-model="formData.course_id" @change="handleChangeCourseID">
               <option :value="null">Choose a course</option>
               <option v-for="course in courseStore.listAll" :value="course.id">{{ course.name }}</option>
             </select>
@@ -53,6 +60,20 @@ const addTopic = async () => {
         </div>
         <div class="col-start-4 col-span-8 text-sm text-red-600" v-show="errors['course_id'].length > 0">
           {{ errors['course_id'].toString() }}
+        </div>
+        <div class="col-span-3 flex">
+          Topic
+        </div>
+        <div class="col-span-7">
+          <div class="relative">
+            <select data-te-select-init data-te-select-filter="true" v-model="formData.topic_id" :disabled="!formData.course_id">
+              <option :value="null">Choose a topic</option>
+              <option v-for="topic in topicStore.listTopic" :value="topic.id">{{ topic.name }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-start-4 col-span-8 text-sm text-red-600" v-show="errors['topic_id'].length > 0">
+          {{ errors['topic_id'].toString() }}
         </div>
         <div class="col-span-3 flex">
           Name
@@ -74,7 +95,7 @@ const addTopic = async () => {
           <button
               type="button"
               class="mr-4 rounded bg-primary px-6 pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-              @click="addTopic"
+              @click="addLesson"
           >
             Add
           </button>

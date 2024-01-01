@@ -1,6 +1,6 @@
 <script async setup>
 
-import {mapTopicStatus} from "../constant";
+import {mapLessonStatus} from "../constant";
 import DateRangePicker from "vue3-daterange-picker";
 import Pagination from "../components/common/Pagination.vue";
 import {onMounted, ref} from "vue";
@@ -10,6 +10,7 @@ import {useCourseStore} from "../stores/course";
 import {useTopicStore} from "../stores/topic";
 import {useLessonStore} from "../stores/lesson";
 import {topic} from "../constant/navigation";
+import {LESSON_STATUS} from "../constant/lesson";
 
 const courseStore = useCourseStore()
 const topicStore = useTopicStore()
@@ -20,7 +21,7 @@ const formData = ref({
   keyword: '',
   status: '',
   page: 1,
-  perPage: 1,
+  perPage: 10,
   range: {
     startDate: null,
     endDate: null
@@ -29,7 +30,7 @@ const formData = ref({
 
 const pagination = ref({
   currentPage: 1,
-  perPage: 1,
+  perPage: 10,
   total: null,
 })
 
@@ -38,7 +39,7 @@ const data = ref({
     {label: "STT", field: "stt"},
     {label: "Name", field: "name"},
     {label: "Created At", field: "created_at", sort: false},
-    {label: "Status", field: "status", format: formatTopicStatus},
+    {label: "Status", field: "status", format: formatLessonStatus},
     {label: "Action", field: "action", sort: false},
   ],
   rows: [],
@@ -50,16 +51,16 @@ onMounted(async () => {
   const datatable = document.getElementById('datatable');
   await courseStore.getListCourse()
 
-  // const response = await topicStore.getListTopicWithPagination()
+  // const response = await lessonStore.getListLessonWithPagination()
   // Object.assign(pagination.value, {
   //   currentPage: response.current_page,
   //   perPage: response.per_page,
   //   total: response.total
   // })
   // Object.assign(formData.value, {page: response.current_page, perPage: response.per_page})
-  // data.value.rows = topicStore.listTopic.map((topic, index) => {
+  // data.value.rows = lessonStore.listLesson.map((topic, index) => {
   //   topic.stt = ((pagination.value.currentPage - 1) * pagination.value.perPage) + index + 1
-  //   topic.status = mapTopicStatus(topic.status)
+  //   topic.status = mapLessonStatus(topic.status)
   //   return topic
   // })
   const setActions = () => {
@@ -78,13 +79,13 @@ onMounted(async () => {
 const handleCourseID = async () => {
   await topicStore.getListTopic(formData.value.course_id)
 }
-async function getListTopicWithPagination() {
-  const response = await topicStore.getListTopicWithPagination(helper.toQueryString(formData.value))
+async function getListLessonWithPagination() {
+  const response = await lessonStore.getListLessonWithPagination(helper.toQueryString(formData.value))
   Object.assign(pagination.value, {currentPage: response.current_page, perPage:response.per_page, total: response.total})
-  data.value.rows = topicStore.listTopic.map((topic, index) => {
-    topic.stt = ((pagination.value.currentPage - 1) * pagination.value.perPage) + index + 1
-    topic.status = mapTopicStatus(topic.status)
-    return topic
+  data.value.rows = lessonStore.listLesson.map((lesson, index) => {
+    lesson.stt = ((pagination.value.currentPage - 1) * pagination.value.perPage) + index + 1
+    lesson.status = mapLessonStatus(lesson.status)
+    return lesson
   })
   datatable.innerHTML = ''
   new Datatable(datatable, formatData(data.value));
@@ -95,7 +96,7 @@ function updateDateRange(data) {
   formData.value.range.endDate = data.endDate.toISOString()
 }
 
-function formatTopicStatus(cell, value) {
+function formatLessonStatus(cell, value) {
   let color = '#black'
   switch (value.toLowerCase()) {
     case 'active':
@@ -120,7 +121,7 @@ function formatData(data) {
           type="button"
           data-te-ripple-init
           data-te-ripple-color="light"
-          href="/topic/${row.id}"
+          href="/lesson/${row.id}"
           class="edit-btn cursor-pointer inline-block rounded-full border border-primary bg-primary text-white p-1.5 uppercase leading-normal shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
          <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.3" stroke="#3B71CA" class="w-4 h-4">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -193,7 +194,7 @@ function reset() {
       <button
           type="button"
           class="rounded px-3 mr-4 bg-primary pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-          @click="getListTopicWithPagination()">
+          @click="getListLessonWithPagination()">
         Search
       </button>
       <button
@@ -206,7 +207,7 @@ function reset() {
   </div>
   <div class="mt-3">
     <RouterLink
-        :to="{name: 'topic_add', query: formData.course_id ? { course_id: formData.course_id } : {}}"
+        :to="{name: 'lesson_add', query: formData.topic_id ? { course_id: formData.course_id, topic_id: formData.topic_id } : {}}"
         type="button"
         class="rounded px-5 mr-4 bg-primary pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
       Add
@@ -219,8 +220,8 @@ function reset() {
       data-te-pagination="false">
   </div>
   <Pagination :currentPage="pagination.currentPage" :total="pagination.total" :perPage="pagination.perPage"
-              @change="(page) => {formData.page = page; getListTopicWithPagination();}"
-              @changePerPage="(perPage) => {formData.perPage = perPage; getListTopicWithPagination()}"/>
+              @change="(page) => {formData.page = page; getListLessonWithPagination();}"
+              @changePerPage="(perPage) => {formData.perPage = perPage; getListLessonWithPagination()}"/>
 
 </template>
 

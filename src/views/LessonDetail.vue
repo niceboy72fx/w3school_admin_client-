@@ -10,33 +10,38 @@ import {useCourseStore} from "../stores/course";
 import router from "../router";
 import {TOPIC_STATUS} from "../constant/topic";
 import {CATEGORY_STATUS} from "../constant/category";
+import {useLessonStore} from "../stores/lesson";
 
 const route = useRoute()
 const courseStore = useCourseStore()
 const topicStore = useTopicStore()
-const topicDetail = ref({
+const lessonStore = useLessonStore()
+const lessonDetail = ref({
   course_id: null,
+  topic_id: null,
   name: null,
   status: null,
 })
 const errors = ref({
   course_id: [],
+  topic_id: [],
   name: [],
   status: [],
 })
 
 onMounted(async () => {
   initTE({Input, Select, Button}, {allowReinits: true});
+  await lessonStore.getLessonDetail(route.params.id);
+  Object.assign(lessonDetail.value, lessonStore.lessonDetail)
   await courseStore.getListCourse()
-  await topicStore.getTopicDetail(route.params.id);
-  Object.assign(topicDetail.value, topicStore.topicDetail)
+  await topicStore.getTopicDetail(lessonDetail.value.course_id);
 })
 
 const updateTopic = async () => {
-  const data = await topicStore.updateTopic(route.params.id, topicDetail.value);
+  const data = await topicStore.updateTopic(route.params.id, lessonDetail.value);
   Object.assign(errors.value, data)
   if(!data){
-    await router.push({name: 'topic'})
+    await router.push({name: 'lesson'})
   }
 }
 
@@ -51,7 +56,7 @@ const updateTopic = async () => {
         </div>
         <div class="col-span-7">
           <div class="relative">
-            <select data-te-select-init data-te-select-filter="true" v-model="topicDetail.course_id" disabled>
+            <select data-te-select-init data-te-select-filter="true" v-model="lessonDetail.course_id">
               <option v-for="course in courseStore.listAll" :value="course.id">{{ course.name }}</option>
             </select>
           </div>
@@ -60,13 +65,27 @@ const updateTopic = async () => {
           {{ errors['course_id'].toString() }}
         </div>
         <div class="col-span-3 flex">
+          Topic
+        </div>
+        <div class="col-span-7">
+          <div class="relative">
+            <select data-te-select-init data-te-select-filter="true" v-model="lessonDetail.topic_id">
+              <option :value="null">Choose a topic</option>
+              <option v-for="topic in topicStore.listTopic" :value="topic.id">{{ topic.name }}</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-start-4 col-span-8 text-sm text-red-600" v-show="errors['topic_id'].length > 0">
+          {{ errors['topic_id'].toString() }}
+        </div>
+        <div class="col-span-3 flex">
           Name
         </div>
         <div class="col-span-7">
           <div class="relative" data-te-input-wrapper-init>
             <input
                 type="text"
-                v-model="topicDetail.name"
+                v-model="lessonDetail.name"
                 placeholder="Name"
                 class="peer block min-h-[auto] w-full rounded border-0 bg-transparent px-3 py-[0.32rem] leading-[1.6] outline-none transition-all duration-200 ease-linear focus:placeholder:opacity-100 peer-focus:text-primary data-[te-input-state-active]:placeholder:opacity-100 motion-reduce:transition-none dark:text-neutral-200 dark:placeholder:text-neutral-200 dark:peer-focus:text-primary [&:not([data-te-input-placeholder-active])]:placeholder:opacity-0"
                 id="formInputName"/>
@@ -80,7 +99,7 @@ const updateTopic = async () => {
         </div>
         <div class="col-span-7">
           <div class="relative">
-            <select data-te-select-init v-model="topicDetail.status">
+            <select data-te-select-init v-model="lessonDetail.status">
               <option :value="value" v-for="(value,name) in TOPIC_STATUS">{{ ucFirst(name) }}</option>
             </select>
           </div>
