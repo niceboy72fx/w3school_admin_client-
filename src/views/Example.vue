@@ -12,10 +12,12 @@ import {useLessonStore} from "../stores/lesson";
 import {topic} from "../constant/navigation";
 import {LESSON_STATUS} from "../constant/lesson";
 import {useRoute} from "vue-router";
+import {useExampleStore} from "../stores/example";
 
 const courseStore = useCourseStore()
 const topicStore = useTopicStore()
 const lessonStore = useLessonStore()
+const exampleStore = useExampleStore()
 const route = useRoute()
 const formData = ref({
   course_id: route.query.course_id,
@@ -40,7 +42,7 @@ const pagination = ref({
 const data = ref({
   columns: [
     {label: "STT", field: "stt"},
-    {label: "Name", field: "name"},
+    {label: "Description", field: "description"},
     {label: "Created At", field: "created_at", sort: false},
     {label: "Status", field: "status", format: formatLessonStatus},
     {label: "Action", field: "action", sort: false},
@@ -54,25 +56,24 @@ onMounted(async () => {
   const datatable = document.getElementById('datatable');
   await courseStore.getListCourse()
 
-  if(formData.value.course_id && formData.value.topic_id){
-    const response = await lessonStore.getListLessonWithPagination(helper.toQueryString(formData.value))
+  if(formData.value.course_id && formData.value.topic_id && formData.value.lesson_id){
+    const response = await exampleStore.getListExampleWithPagination(helper.toQueryString(formData.value))
     Object.assign(pagination.value, {
       currentPage: response.current_page,
       perPage: response.per_page,
       total: response.total
     })
     Object.assign(formData.value, {page: response.current_page, perPage: response.per_page})
-    data.value.rows = lessonStore.listLesson.map((lesson, index) => {
-      lesson.stt = ((pagination.value.currentPage - 1) * pagination.value.perPage) + index + 1
-      lesson.status = mapLessonStatus(lesson.status)
-      return lesson
+    data.value.rows = exampleStore.listExample.map((exampleStore, index) => {
+      exampleStore.stt = ((pagination.value.currentPage - 1) * pagination.value.perPage) + index + 1
+      exampleStore.status = mapLessonStatus(exampleStore.status)
+      return exampleStore
     })
   }
 
   const setActions = () => {
     document.querySelectorAll(".lock-btn").forEach((btn) => {
       btn.addEventListener("click", () => {
-        console.log(btn.attributes["data-te-row-id"].value)
         // router.push({name: 'course_detail', params: {type: 'approved', id: btn.attributes["data-te-row-id"].value}})
       });
     });
@@ -83,23 +84,23 @@ onMounted(async () => {
   // const hideAlert = setTimeout(() => {courseDetailStore.statusUpdate = false}, 4000);
 })
 const handleCourseID = async () => {
-  await topicStore.getListTopic(formData.value.course_id)
+  await topicStore.getListTopic(helper.toQueryString({course_id: formData.value.course_id}))
 }
 const handleTopicID = async () => {
-  await lessonStore.getListLesson(formData.value.topic_id)
+  await lessonStore.getListLesson(helper.toQueryString({course_id: formData.value.course_id, topic_id: formData.value.topic_id}))
 }
 
-async function getListLessonWithPagination() {
-  const response = await lessonStore.getListLessonWithPagination(helper.toQueryString(formData.value))
+async function getListExampleWithPagination() {
+  const response = await exampleStore.getListExampleWithPagination(helper.toQueryString(formData.value))
   Object.assign(pagination.value, {
     currentPage: response.current_page,
     perPage: response.per_page,
     total: response.total
   })
-  data.value.rows = lessonStore.listLesson.map((lesson, index) => {
-    lesson.stt = ((pagination.value.currentPage - 1) * pagination.value.perPage) + index + 1
-    lesson.status = mapLessonStatus(lesson.status)
-    return lesson
+  data.value.rows = exampleStore.listExample.map((example, index) => {
+    example.stt = ((pagination.value.currentPage - 1) * pagination.value.perPage) + index + 1
+    example.status = mapLessonStatus(example.status)
+    return example
   })
   datatable.innerHTML = ''
   new Datatable(datatable, formatData(data.value));
@@ -135,7 +136,7 @@ function formatData(data) {
           type="button"
           data-te-ripple-init
           data-te-ripple-color="light"
-          href="/lesson/${row.id}"
+          href="/example/${row.id}"
           class="edit-btn cursor-pointer inline-block rounded-full border border-primary bg-primary text-white p-1.5 uppercase leading-normal shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
          <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" stroke-width="1.3" stroke="#3B71CA" class="w-4 h-4">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
@@ -159,8 +160,9 @@ function formatData(data) {
 
 function reset() {
   formData.value.course_id = null
+  formData.value.topic_id = null
+  formData.value.lesson_id = null
   formData.value.keyword = ''
-  formData.value.roles = []
   formData.value.status = ''
   formData.value.range.startDate = null
   formData.value.range.endDate = null
@@ -221,7 +223,7 @@ function reset() {
       <button
           type="button"
           class="rounded px-3 mr-4 bg-primary pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]"
-          @click="getListLessonWithPagination()">
+          @click="getListExampleWithPagination()">
         Search
       </button>
       <button
@@ -234,7 +236,7 @@ function reset() {
   </div>
   <div class="mt-3">
     <RouterLink
-        :to="{name: 'example_add', query: formData.course_id ? { course_id: formData.course_id, topic_id: formData.topic_id } : {}}"
+        :to="{name: 'example_add', query: formData.course_id ? { course_id: formData.course_id, topic_id: formData.topic_id, lesson_id: formData.lesson_id } : {}}"
         type="button"
         class="rounded px-5 mr-4 bg-primary pb-2 pt-2.5 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-primary-600 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-primary-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-primary-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] dark:shadow-[0_4px_9px_-4px_rgba(59,113,202,0.5)] dark:hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)] dark:active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.2),0_4px_18px_0_rgba(59,113,202,0.1)]">
       Add

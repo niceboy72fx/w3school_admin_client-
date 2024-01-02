@@ -43,7 +43,7 @@ const addTopic = async () => {
         <div class="col-span-3 flex">
           Course
         </div>
-        <div class="col-span-7">
+        <div class="col-span-9">
           <div class="relative">
             <select data-te-select-init data-te-select-filter="true" v-model="formData.course_id">
               <option :value="null">Choose a course</option>
@@ -57,7 +57,7 @@ const addTopic = async () => {
         <div class="col-span-3 flex">
           Name
         </div>
-        <div class="col-span-7">
+        <div class="col-span-9">
           <div class="relative" data-te-input-wrapper-init>
             <input
                 type="text"

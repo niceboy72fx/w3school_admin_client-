@@ -32,19 +32,6 @@ const errors = ref({
   description: [],
   content: [],
 })
-const editorConfig = ref({
-  toolbar: {
-    items: [
-      'undo', 'redo',
-      '|', 'heading',
-      '|', 'fontfamily', 'fontsize', 'fontColor', 'fontBackgroundColor',
-      '|', 'bold', 'italic', 'strikethrough', 'subscript', 'superscript', 'code',
-      '|', 'link', 'uploadImage', 'blockQuote', 'codeBlock',
-      '|', 'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent'
-    ],
-    shouldNotGroupWhenFull: false
-  }
-})
 onMounted(async () => {
   initTE({Input, Select, Button}, {allowReinits: true});
   await courseStore.getListCourse()
@@ -60,7 +47,14 @@ const addExample = async () => {
   const data = await exampleStore.addExample(formData.value);
   Object.assign(errors.value, data)
   if (!data) {
-    await router.push({name: 'lesson'})
+    await router.push({
+      name: 'example',
+      query: {
+        course_id: formData.value.course_id,
+        topic_id: formData.value.topic_id,
+        lesson_id: formData.value.lesson_id
+      }
+    })
   }
 }
 
@@ -73,7 +67,7 @@ const addExample = async () => {
         <div class="col-span-3 flex">
           Course
         </div>
-        <div class="col-span-7">
+        <div class="col-span-9">
           <div class="relative">
             <select data-te-select-init data-te-select-filter="true" v-model="formData.course_id"
                     @change="handleChangeCourseID">
@@ -88,7 +82,7 @@ const addExample = async () => {
         <div class="col-span-3 flex">
           Topic
         </div>
-        <div class="col-span-7">
+        <div class="col-span-9">
           <div class="relative">
             <select data-te-select-init data-te-select-filter="true" v-model="formData.topic_id"
                     :disabled="!formData.course_id" @change="handleChangeTopicID">
@@ -103,7 +97,7 @@ const addExample = async () => {
         <div class="col-span-3 flex">
           Lesson
         </div>
-        <div class="col-span-7">
+        <div class="col-span-9">
           <div class="relative">
             <select data-te-select-init data-te-select-filter="true" v-model="formData.lesson_id"
                     :disabled="!formData.topic_id">
@@ -118,7 +112,7 @@ const addExample = async () => {
         <div class="col-span-3 flex">
           Description
         </div>
-        <div class="col-span-7">
+        <div class="col-span-9">
           <div class="relative" data-te-input-wrapper-init>
             <input
                 type="text"
@@ -134,9 +128,9 @@ const addExample = async () => {
         <div class="col-span-3 flex">
           Content
         </div>
-        <div class="col-span-7">
+        <div class="col-span-9">
           <div class="relative">
-            <ckeditor :editor="ClassicEditor" v-model="formData.content" :config="editorConfig"></ckeditor>
+            <ckeditor :editor="ClassicEditor" v-model="formData.content"></ckeditor>
           </div>
         </div>
         <div class="col-start-4 col-span-8 text-sm text-red-600" v-show="errors.content.length > 0">
