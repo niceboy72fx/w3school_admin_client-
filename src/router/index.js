@@ -187,28 +187,28 @@ const router = createRouter({
           },
         },
         {
-          path: '/exercise',
-          name: 'exercise',
-          component: () => import('../views/Exercise.vue'),
+          path: '/example',
+          name: 'example',
+          component: () => import('../views/Example.vue'),
           meta: {
-            breadcrumb: 'Exercise',
+            breadcrumb: 'Example',
           },
         },
         {
-          path: '/exercise/:id',
-          name: 'exercise_detail',
-          component: () => import('../views/ExerciseDetail.vue'),
+          path: '/example/:id',
+          name: 'example_detail',
+          component: () => import('../views/ExampleDetail.vue'),
           props: { isEdit: false},
           meta: {
-            breadcrumb: 'Exercise Detail',
+            breadcrumb: 'Example Detail',
           },
         },
         {
-          path: '/exercise/add',
-          name: 'exercise_add',
-          component: () => import('../views/ExerciseAdd.vue'),
+          path: '/example/add',
+          name: 'example_add',
+          component: () => import('../views/ExampleAdd.vue'),
           meta: {
-            breadcrumb: 'Exercise Add',
+            breadcrumb: 'Example Add',
           },
         },
       ]

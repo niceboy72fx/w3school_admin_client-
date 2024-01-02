@@ -26,8 +26,7 @@ export const useUserStore = defineStore('userStore', () => {
 
         async function updateAccount(id, formData) {
             try {
-                formData["_method"] = "PUT"
-                await api.post(`api/admin/account/${id}`, formData, {
+                await api.post(`api/admin/account/${id}`, {_method: 'PUT', ...convertBooleanToNumeric(formData)}, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     },
@@ -36,6 +35,28 @@ export const useUserStore = defineStore('userStore', () => {
                 return error.response.data.errors
             }
             // statusUpdate.value = data.data
+        }
+
+        function convertBooleanToNumeric(obj) {
+            if (typeof obj !== 'object' || obj === null) {
+                return obj;
+            }
+
+            const newObj = {};
+
+            for (const key in obj) {
+                if (typeof obj[key] === 'boolean') {
+                    newObj[key] = obj[key] ? 1 : 0;
+                } else if (Array.isArray(obj[key])) {
+                    newObj[key] = obj[key].map(item => convertBooleanToNumeric(item));
+                } else if (typeof obj[key] === 'object') {
+                    newObj[key] = convertBooleanToNumeric(obj[key]);
+                } else {
+                    newObj[key] = obj[key];
+                }
+            }
+
+            return newObj;
         }
 
         return {

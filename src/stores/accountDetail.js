@@ -17,61 +17,61 @@ export const useAccountDetailStore = defineStore('accountDetailStore', () => {
         function mapPermissionGroup(data) {
             const result = {
                 login: {
-                    cms: 0,
-                    client: 0,
+                    cms: false,
+                    client: false,
                 },
                 course: {
-                    view: 0,
-                    update: 0,
-                    create: 0,
-                    approve: 0,
+                    view: false,
+                    update: false,
+                    create: false,
+                    approve: false,
                 },
                 account: {
                     cms: {
-                        view: 0,
-                        update: 0,
-                        create: 0,
+                        view: false,
+                        update: false,
+                        create: false,
                     },
                     client: {
-                        view: 0,
-                        closure: 0,
+                        view: false,
+                        closure: false,
                     }
                 },
             }
             data.forEach(function (permission) {
                 switch (permission.toUpperCase()) {
                     case "LOGIN_CMS":
-                        result.login.cms = 1;
+                        result.login.cms = true;
                         break;
                     case "LOGIN_CLIENT":
-                        result.login.client = 1;
+                        result.login.client = true;
                         break;
                     case "COURSE_VIEW":
-                        result.course.view = 1;
+                        result.course.view = true;
                         break;
                     case "COURSE_CREATE":
-                        result.course.create = 1;
+                        result.course.create = true;
                         break;
                     case "COURSE_UPDATE":
-                        result.course.update = 1;
+                        result.course.update = true;
                         break;
                     case "COURSE_APPROVE":
-                        result.course.approve = 1;
+                        result.course.approve = true;
                         break;
                     case "ACCOUNT_CMS_VIEW":
-                        result.account.cms.view = 1;
+                        result.account.cms.view = true;
                         break;
                     case "ACCOUNT_CMS_UPDATE":
-                        result.account.cms.create = 1;
+                        result.account.cms.update = true;
                         break;
                     case "ACCOUNT_CMS_CREATE":
-                        result.account.cms.update = 1;
+                        result.account.cms.create = true;
                         break;
                     case "ACCOUNT_CLIENT_VIEW":
-                        result.account.client.view = 1;
+                        result.account.client.view = true;
                         break;
                     case "ACCOUNT_CLIENT_CLOSURE":
-                        result.account.client.closure = 1;
+                        result.account.client.closure = true;
                         break;
                 }
             })

@@ -232,7 +232,7 @@ onMounted(async () => {
                   <label
                       class="inline-block pl-[0.15rem] hover:pointer-events-none"
                       for="permissionCheckbox"
-                  >{{ ucFirst(permission) + formData.permissions[key][key2][permission] }}</label>
+                  >{{ ucFirst(permission)}}</label>
                 </div>
               </div>
             </div>

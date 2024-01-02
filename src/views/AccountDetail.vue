@@ -12,32 +12,110 @@ import {USER_STATUS} from "../constant/user";
 const route = useRoute()
 const userStore = useUserStore();
 const accountDetailStore = useAccountDetailStore()
+const defaultPermissions = ref({
+  login: {
+    cms: true,
+    client: false,
+  },
+  course: {
+    view: false,
+    update: false,
+    create: false,
+    approve: false
+  },
+  account: {
+    cms: {
+      view: false,
+      update: false,
+      create: false
+    },
+    client: {
+      view: false,
+      closure: false
+    }
+  }
+})
+const editorPermissions = ref({
+  login: {
+    cms: true,
+    client: false,
+  },
+  course: {
+    view: true,
+    update: true,
+    create: true,
+    approve: false
+  },
+  account: {
+    cms: {
+      view: false,
+      update: false,
+      create: false
+    },
+    client: {
+      view: false,
+      closure: false
+    }
+  }
+})
+const adminPermissions = ref({
+  login: {
+    cms: true,
+    client: true,
+  },
+  course: {
+    view: true,
+    update: true,
+    create: true,
+    approve: true
+  },
+  account: {
+    cms: {
+      view: true,
+      update: true,
+      create: true
+    },
+    client: {
+      view: true,
+      closure: true
+    }
+  }
+})
 const accountDetail = ref({
   name: null,
   email: null,
   roles: [2],
-  status: null,
   permissions: {
+    login: {
+      cms: true,
+      client: true,
+    },
     course: {
-      view: 1,
-      update: 1,
-      create: 1,
-      approve: 0
+      view: true,
+      update: true,
+      create: true,
+      approve: false
     },
     account: {
       cms: {
-        view: 0,
-        update: 0,
-        create: 0
+        view: false,
+        update: false,
+        create: false
       },
       client: {
-        view: 0,
-        closure: 0
+        view: false,
+        closure: false
       }
     }
   },
 })
 const errors = ref({
+  name: [],
+  email: [],
+  status: [],
+  roles: [],
+})
+const defaultErrors = ref({
   name: [],
   email: [],
   status: [],
@@ -53,6 +131,15 @@ const updateAccount = async () => {
   Object.assign(errors.value, data)
   if(!data){
     await router.push({name: 'account_cms'})
+  }
+}
+const handlePermissionsByRole = () => {
+  if (accountDetail.value.roles.includes(ROLE.ADMIN)) {
+    accountDetail.value.permissions = {...adminPermissions.value}
+  } else if (accountDetail.value.roles.includes(ROLE.EDITOR)) {
+    accountDetail.value.permissions = {...editorPermissions.value}
+  } else {
+    accountDetail.value.permissions = {...defaultPermissions.value}
   }
 }
 </script>
@@ -113,7 +200,7 @@ const updateAccount = async () => {
         Roles
       </div>
       <div class="col-span-3">
-        <input class="checkbox cursor-pointer" type="checkbox" :value="ROLE.ADMIN" id="roleAdminCheckbox" v-model="accountDetail.roles"/>
+        <input class="checkbox cursor-pointer" type="checkbox" :value="ROLE.ADMIN" id="roleAdminCheckbox" v-model="accountDetail.roles" @change="handlePermissionsByRole"/>
         <label
             class="inline-block pl-[0.15rem] cursor-pointer"
             for="roleAdminCheckbox">
@@ -124,7 +211,7 @@ const updateAccount = async () => {
         </div>
       </div>
       <div class="col-span-6">
-        <input class="checkbox cursor-pointer" type="checkbox" :value="ROLE.EDITOR" id="roleEditorCheckbox" v-model="accountDetail.roles"/>
+        <input class="checkbox cursor-pointer" type="checkbox" :value="ROLE.EDITOR" id="roleEditorCheckbox" v-model="accountDetail.roles" @change="handlePermissionsByRole"/>
         <label
             class="inline-block pl-[0.15rem] cursor-pointer"
             for="roleEditorCheckbox">
@@ -144,10 +231,11 @@ const updateAccount = async () => {
               <div class="mb-[0.125rem] mr-4 inline-block min-h-[1.5rem] pl-[1.5rem]"
                    v-for="(value, permission) in permissionGroupChild">
                 <input
-                    class="checkbox "
+                    class="checkbox"
                     type="checkbox"
                     :checked="value"
-                    :id="permission + 'checkbox'"
+                    v-model="accountDetail.permissions[key][key2][permission]"
+                    id="permissionCheckbox"
                 />
                 <label
                     class="inline-block pl-[0.15rem] hover:pointer-events-none"
@@ -160,10 +248,11 @@ const updateAccount = async () => {
             <div class="mb-[0.125rem] mr-4 inline-block min-h-[1.5rem] pl-[1.5rem]"
                  v-for="(value, permission) in permissionGroup">
               <input
-                  class="checkbox "
+                  class="checkbox"
                   type="checkbox"
                   :checked="value"
-                  :id="permission + 'checkbox'"
+                  v-model="accountDetail.permissions[key][permission]"
+                  id="permissionCheckbox"
               />
               <label
                   class="inline-block pl-[0.15rem] hover:pointer-events-none"

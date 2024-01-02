@@ -13,7 +13,8 @@ import {COURSE_LEVEL, COURSE_STATUS} from "../../constant/course";
 import DateRangePicker from "vue3-daterange-picker";
 import Pagination from "../common/Pagination.vue";
 import {useCourseDetailStore} from "../../stores/courseDetail";
-
+import {useAuthStore} from "../../stores/auth";
+const {user} = useAuthStore()
 const courseDetailStore = useCourseDetailStore();
 const courseStore = useCourseStore();
 const formData = ref({
@@ -273,7 +274,7 @@ function formatData(data) {
       </button>
     </div>
   </div>
-  <div class="mt-3">
+  <div class="mt-3" v-if="user.permissions.course.approve">
     <button
         @click="batchApproval"
         type="button"

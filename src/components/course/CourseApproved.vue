@@ -14,7 +14,9 @@ import DateRangePicker from "vue3-daterange-picker";
 import Pagination from "../common/Pagination.vue";
 import {useCourseDetailStore} from "../../stores/courseDetail";
 import router from "../../router";
-
+import {useUserStore} from "../../stores/user";
+import {useAuthStore} from "../../stores/auth";
+const {user} = useAuthStore()
 const courseDetailStore = useCourseDetailStore();
 const courseStore = useCourseStore();
 const formData = ref({
@@ -250,7 +252,7 @@ function formatData(data) {
       </button>
     </div>
   </div>
-  <div class="mt-3">
+  <div class="mt-3" v-if="user.permissions.course.create">
     <RouterLink
         :to="{name: 'course_add'}"
         type="button"
