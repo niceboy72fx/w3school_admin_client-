@@ -19,7 +19,8 @@ const formData = ref({
 });
 
 const errors = ref({
-  email: []
+  email: [],
+  password: []
 })
 const submit = async () => {
   const data = await authStore.login(formData.value)
@@ -79,6 +80,9 @@ const loginGoogle = async () => {
           <!--          <InputError class="mt-2" :message="errors.email.toString()"/>-->
           <div class="mb-6 text-sm text-red-600" v-show="errors.email.length > 0">
             {{ errors.email.toString() }}
+          </div>
+          <div class="mb-6 text-sm text-red-600" v-show="errors.password.length > 0">
+            {{ errors.password.toString() }}
           </div>
           <!-- Remember me checkbox -->
           <div class="mb-6 flex items-center justify-between">
