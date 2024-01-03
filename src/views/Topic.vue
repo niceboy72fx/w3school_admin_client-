@@ -155,8 +155,8 @@ function reset() {
 <template>
   <div class="grid grid-cols-12 gap-x-6 gap-y-2 mb-6">
     <label class="text-gray-400 col-span-3">Course</label>
-    <label class="text-gray-400 col-span-3">Search</label>
-    <label class="text-gray-400 col-span-3">Created at</label>
+    <label class="text-gray-400 col-span-2">Search</label>
+    <label class="text-gray-400 col-span-2">Created at</label>
     <label class="text-gray-400 col-span-3">Status</label>
     <div class="col-span-3">
       <select data-te-select-init data-te-select-filter="true" v-model="formData.course_id">
@@ -164,7 +164,7 @@ function reset() {
         <option v-for="course in courseStore.listAll" :value="course.id">{{ course.name }}</option>
       </select>
     </div>
-    <div class="relative col-span-3" data-te-input-wrapper-init>
+    <div class="relative col-span-2" data-te-input-wrapper-init>
       <input
           type="text"
           v-model="formData.keyword"
@@ -172,7 +172,7 @@ function reset() {
           id="exampleFormControlInput1"
           placeholder="Type something to search..."/>
     </div>
-    <div class="col-span-3">
+    <div class="col-span-2">
       <DateRangePicker :date-range="formData.range" :auto-apply="true" @update:model-value="updateDateRange"/>
     </div>
     <div class="col-span-3">
